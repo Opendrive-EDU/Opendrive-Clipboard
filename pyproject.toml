@@ -1,0 +1,15 @@
+[project]
+name = "opendrive-clipboard"
+version = "0.1.0"
+description = "Synthetic OpenDrive Clipboard judge-demo agent for instructor-reviewed post-drive debrief drafting."
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Street Law OpenDrive", email = "mrlaw@streetlawopendrive.com" }
+]
+
+[project.scripts]
+opendrive-clipboard-demo = "opendrive_clipboard.server:main"
+
+[tool.unittest]
+start-directory = "tests"

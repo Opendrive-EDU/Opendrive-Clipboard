@@ -1,99 +1,0 @@
-
-
-
-
-
-
-
-
-
-
-[DEPRECATED 2026-04-30 — DO NOT DISTRIBUTE]
-This brief has been renamed and reframed to clarify that the licensed human
-instructor is the sole authority for behind-the-wheel instruction. The current
-brief lives at:
-
-    .mdfiles/beacon/OpenDrive_Instructor_Debrief_Assistant_Brief.md
-    docs/dol-edu/OpenDrive_Instructor_Debrief_Assistant_Brief.md (mirror)
-
-Use those files. This .txt is preserved only for audit-trail history. Any reader
-who arrived here from a stale email attachment or link should switch to the
-renamed brief.
-
-Project Brief (DEPRECATED)
-
-OpenDrive Safety Coach Agent (renamed: OpenDrive Instructor Debrief Assistant)
-A public-safe AI agent prototype that helps driving instructors turn teachable driving moments into reviewed coaching plans, student reflections, lesson recommendations, language-access summaries, and audit-style demo logs.
-
-
-OrganizationStreet Law OpenDrive / OpenDriveEDUPrepared forGoogle / Devpost AI agents challenge planningOwnerMr. Law - Founder, Lead Instructor, and Product LeadBuild laneOpenDrive AI Lab - prototype/testing lane before production usePrototype boundaryFake/demo data only; instructor-supervised; not a licensing or vehicle-control tool
-
-
-1. Executive Summary
-OpenDrive Safety Coach Agent is a focused, hackathon-safe version of the larger OpenDriveEDU safety vision. It does not try to replace the instructor, run a full LMS, process student records, control a vehicle, or expose Beacon production concepts. It demonstrates one valuable layer: turning a driving event into a reviewed coaching plan.
-The agent receives a demo driving scenario such as late braking near a crosswalk, speed creep in a residential area, or uncertainty at a yellow light. It then organizes the moment into an
-instructor-ready coaching plan with a safety summary, risk pattern, recommended lesson focus, reflection prompt, practice assignment, language-access preview, and saved demo log.
-
-
-2. Problem Worth Solving
-Driver education has a gap between classroom knowledge and in-car behavior. A student may know a rule but still miss a pedestrian, rush a yellow light, follow too closely, freeze under pressure, or fail to verbalize what they are scanning. Instructors need fast, consistent ways to preserve those teachable moments and turn them into useful follow-up.
-This problem is especially important when instruction includes young drivers, new adult drivers, international students, language-access needs, and families who need clear after-lesson summaries. The goal is not to create a bigger pile of notes. The goal is to create a better coaching loop.
-
-
-3. Target User
-
-Family / support personDriving instructor
-Needs quick, accurate coaching language after a driving event.Student driver
-Needs a clear reflection prompt and a next practice focus.Needs a short,
-plain-language follow-up summary without private system data.
-
-
-4. Product Concept
-The app is a web-based instructor dashboard. The instructor selects or enters a demo event, asks the agent to draft a coaching plan, reviews the plan, optionally generates a language-access preview, and saves the approved demo record.
-
-FeatureWhat it proves in the demoScenario IntakeA structured form captures a fake/demo drive event, location type, observed concern, and instructor notes.Agent DraftGemini/agent workflow classifies the safety concern and creates a coaching plan.Lesson MatchThe agent recommends a lesson focus such as scanning, intersections, speed control, following distance, or emotional self-control.Reflection BuilderThe agent creates a student-friendly reflection question and practice assignment.Language Access PreviewAn instructor-reviewed bilingual support preview demonstrates future access for students and families.Human Review GateInstructor can approve, edit, reject, or regenerate before anything is saved.Demo LogSaved workflow records prove the agent completes a real task beyond chat.
-5. Agent Workflow
-
-
-
-
-6. Recommended Hackathon Stack
-The prototype should stay clean and demo-focused. The strongest build is a new public repo that references OpenDriveEDU but does not merge private OpenDriveEDU, Beacon, Vault, or production student-data systems.
-
-LayerRecommended choiceReasonFrontendVue 3 + Inertia + TailwindFast demo UI, clean component pages, modern Laravel workflow.BackendLaravelStrong routing, auth-ready structure, policies, controllers, and service classes.AgentGemini + Google Cloud Agent Builder / ADK-ready designShows a real agent workflow that classifies, retrieves, drafts, waits for review, and saves.DataMongoDB or SQLite demo store; BigQuery laterMongoDB is strong for partner-track retrieval; SQLite keeps local demo simple; BigQuery fits future research logs.Language accessCurated glossary + Gemini/Translation previewSafe preview of bilingual support without claiming official translation.DeploymentHosted web demo; Google Cloud Run is a good targetEasy for judges to test; aligns with Google Cloud.
-7. Simple Architecture
-
-
-Instructor Web UI
-Laravel Services
-Agent + Tool Layer
-Reviewed Output
-Enter demo event
-Routes
-Gemini reasoning
-Coaching planReview planPoliciesLesson retrievalReflection promptApprove or rejectWorkflow recordsLanguage previewPractice focusDemo log writeAudit-style demo log8. Public Repo Boundary
-
-
-
-
-9. MVP Pages for the Demo
-
-PagePurposeDashboardExplains the mission, shows demo status, and starts the workflow.New Demo EventInstructor enters a fake driving situation and submits it to the agent.Coaching Plan ReviewAgent output appears with approve, edit, reject, and regenerate actions.Language Access PreviewShows instructor-reviewed bilingual support for the approved plan.Demo LogShows saved workflow records and proves the agent completed a task.Public Safety / ArchitectureExplains why the project matters and how the agent/tool layers work.10. Three-Minute Demo Script
-
-TimeWhat to show0:00-0:25Problem: instructors need a fast, safer way to turn drive events into coaching.
-0:25-0:55Enter a fake event: late braking near a crosswalk, speed pressure, or yellow-light indecision.0:55-1:35Run the agent: classify risk, retrieve lesson context, draft coaching plan.1:35-2:10Instructor review: edit/approve; show human-in-the-loop control.2:10-2:35Language-access preview: show support summary and vocabulary disclaimer.2:35-3:00Demo log: saved record, privacy boundary, future roadmap.11. Submission Planning
-Current planning assumption: build a public-safe demo early, then use the final days for README, license, deployment, screenshots, demo video, and Devpost form. Confirm the exact deadline and final rules from the acceptance page because public program pages can differ.
-
-AssetStatus targetHosted demo URLWorking by MVP freeze.Public code repositoryNew repo only; complete open-source license visible.README + setup instructions
-Clear local install, env examples, fake-data seed command.Demo videoAbout 3 minutes; show workflow, human review, and privacy boundary.ScreenshotsDashboard, event intake, plan review, language preview, demo log.
-
-
-
-Safety statementFake data only; not a licensing, diagnostic, enforcement, or vehicle-control tool.
-Source note: This brief is based on the OpenDriveEDU safety coach starter files, the uploaded OpenDrive EDU logo, and the public Devpost challenge pages reviewed on April 26, 2026. Treat official contest rules and deadlines as pending until confirmed after acceptance.
-
-
-
-
-
-

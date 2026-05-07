@@ -1,6 +1,6 @@
 # OpenDrive Clipboard
 
-A public-safe AI agent prototype that helps **licensed driving instructors** turn teachable driving moments into reviewed post-drive debrief notes, student reflection prompts, lesson recommendations, language-access summaries, and audit-style demo logs.
+A public-safe AI agent prototype that helps **licensed driving instructors** turn teachable driving moments into simple, structured, evidence-informed debriefs, student reflection prompts, lesson recommendations, language-access summaries, and audit-style demo logs.
 
 | Field | Value |
 |---|---|
@@ -14,20 +14,20 @@ A public-safe AI agent prototype that helps **licensed driving instructors** tur
 
 ## What this is NOT
 
-**This is not an AI driving instructor.**
+**This is not an automated driving instructor.**
 
 - It does not communicate with students during a drive.
 - It does not control or assist the vehicle.
 - It does not make licensing, grading, or pass/fail decisions.
 - It does not run in real-time during behind-the-wheel sessions.
 
-The licensed human instructor remains the sole authority for behind-the-wheel instruction. This tool only generates **post-drive paperwork drafts** that the instructor reads, edits, and approves before anything reaches a student or family. Compliant with WA RCW 46.82 + WAC 308-108. See `docs/dol-edu/BEACON-IS-AND-IS-NOT.md` for the full boundary statement.
+The licensed human instructor remains the sole authority for behind-the-wheel instruction. This tool only generates **post-drive debrief drafts** that the instructor reads, edits, and approves before anything reaches a student or family. Compliant with WA RCW 46.82 + WAC 308-108. See `docs/dol-edu/BEACON-IS-AND-IS-NOT.md` for the full boundary statement.
 
 ---
 
 ## 1. Executive Summary
 
-OpenDrive Clipboard is a focused, hackathon-safe version of the larger OpenDriveEDU safety vision. It does not try to replace the instructor, run a full LMS, process student records, control a vehicle, or expose Beacon production concepts. It demonstrates one valuable layer: turning a **post-drive event recap** into a **reviewed debrief note** that the licensed instructor approves before delivery.
+OpenDrive Clipboard is a focused, hackathon-safe version of the larger OpenDriveEDU safety vision. It does not try to replace the instructor, run a full LMS, process student records, control a vehicle, or expose OpenDrive Beacon production concepts. It demonstrates one valuable layer: turning a **post-drive teachable moment** into a **reviewed debrief** that the licensed instructor approves before delivery.
 
 The agent receives a demo driving scenario such as late braking near a crosswalk, speed creep in a residential area, or uncertainty at a yellow light. It then organizes the moment into an **instructor-ready debrief note** with a safety summary, risk pattern, suggested lesson focus, reflection prompt, practice assignment, language-access preview, and saved demo log. **The instructor approves, edits, or rejects every output. Nothing reaches a student or family without instructor sign-off.**
 
@@ -35,7 +35,13 @@ The agent receives a demo driving scenario such as late braking near a crosswalk
 
 ## 2. Problem Worth Solving
 
-Driver education has a gap between classroom knowledge and in-car behavior. A student may know a rule but still miss a pedestrian, rush a yellow light, follow too closely, freeze under pressure, or fail to verbalize what they are scanning. **Instructors** need fast, consistent ways to preserve those teachable moments and turn them into useful follow-up paperwork after the drive ends.
+Behind-the-wheel lessons should be learning experiences, not pass/fail moments or overwhelming correction lists.
+
+In a good drive lesson, the student practices skills and drills, learns as they go, and receives simple follow-up from the instructor: "work on this next." But in real-world instruction, some lessons drift toward evaluation-heavy instruction, where the student feels like every drive is a test. Other lessons end with too many corrections at once, leaving the student discouraged or unsure what actually matters most.
+
+Students need clear, respectful feedback they can digest. A young adult, international student, or student without strong practice support at home may need more than "brake earlier" or "watch your speed." They need to understand the specific skill to work on, why it matters, and what practice step comes next.
+
+OpenDrive Clipboard helps licensed instructors preserve teachable moments, connect observations to specific skills, and send students home with respectful next steps.
 
 This problem is especially important when instruction includes young drivers, new adult drivers, international students, language-access needs, and families who need clear after-lesson summaries. The goal is not to create a bigger pile of notes. The goal is to give the licensed instructor a better post-drive debrief workflow.
 
@@ -45,7 +51,7 @@ This problem is especially important when instruction includes young drivers, ne
 
 | User | Need |
 |---|---|
-| **Driving instructor** (primary) | Quick, accurate post-drive debrief language after a teachable moment; full edit/approve/reject control |
+| **Driving instructor** (primary) | Clear post-drive debrief language after a teachable moment; full edit/approve/reject control |
 | **Student driver** | A clear reflection prompt and a next practice focus, delivered by the instructor |
 | **Family / support person** | A short, plain-language follow-up summary without private system data, delivered by the instructor |
 
@@ -91,7 +97,7 @@ The prototype should stay clean and demo-focused. The strongest build is a new p
 
 | Layer | Recommended choice | Reason |
 |---|---|---|
-| Frontend | Vue 3 + Inertia + Tailwind | Fast demo UI, clean component pages, modern Laravel workflow. |
+| Frontend | React + Inertia + Tailwind | Matches the DriveDesk WA OpenDrive UI lane and keeps Beacon/Clipboard surfaces on the current frontend stack. |
 | Backend | Laravel | Strong routing, auth-ready structure, policies, controllers, and service classes. |
 | Agent | Gemini + Google Cloud Agent Builder / ADK-ready design | Shows a real agent workflow that classifies, retrieves, drafts, **waits for instructor review**, and saves. |
 | Data | MongoDB or SQLite demo store; BigQuery later | MongoDB is strong for partner-track retrieval; SQLite keeps local demo simple; BigQuery fits future research logs. |
@@ -165,7 +171,7 @@ Current planning assumption: build a public-safe demo early, then use the final 
 
 ## Safety statement
 
-Fake data only; not a licensing, diagnostic, enforcement, or vehicle-control tool. Not an AI driving instructor. The licensed human instructor is the sole authority for behind-the-wheel instruction; this tool only drafts post-drive paperwork for the instructor to review and approve. Operates within WA RCW 46.82 + WAC 308-108.
+Fake data only; not a licensing, diagnostic, enforcement, or vehicle-control tool. Not an automated driving instructor. The licensed human instructor is the sole authority for behind-the-wheel instruction; this tool only drafts post-drive debrief materials for the instructor to review and approve. Operates within WA RCW 46.82 + WAC 308-108.
 
 ---
 

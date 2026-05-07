@@ -41,7 +41,7 @@ The agent does not approve its own output.
 Use this public framing:
 
 ```text
-OpenDrive Clipboard is a B2B, instructor-reviewed multi-agent workflow for driving schools.
+OpenDrive Clipboard is a B2B, instructor-reviewed multi-agent workflow that turns teachable driving moments into clear, respectful next steps.
 ```
 
 Use this core line:
@@ -58,14 +58,14 @@ The assistant drafts. The instructor decides.
 
 Do not frame this as:
 
-- AI driving instructor;
-- AI coach;
+- automated driving instructor;
+- automated coach;
 - automated instructor;
 - student-facing tutor;
 - driver readiness scorer;
 - licensing evaluator;
 - vehicle-control system;
-- real-time in-car coaching;
+- real-time in-car intervention;
 - interior audio system.
 
 Required boundary:
@@ -81,7 +81,7 @@ Fake/demo data only. Instructor-reviewed. Post-drive only. No interior audio. No
 Use two deployable surfaces:
 
 ```text
-Laravel / Vue / Inertia web app
+Laravel / React / Inertia web app
   -> Cloud Run
 
 Python ADK agent service
@@ -199,7 +199,7 @@ Deploy the web app and/or agent service as containers.
 
 Use Cloud Run for:
 
-- Laravel/Vue web app;
+- Laravel/React web app;
 - public demo URL;
 - optional Python ADK service;
 - fast iteration and deployment.

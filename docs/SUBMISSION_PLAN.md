@@ -60,10 +60,10 @@ The product spec is the existing brief at `.mdfiles/beacon/OpenDrive_Instructor_
 - **Gemini-powered ADK agent** (Python) running on **Cloud Run**.
 - Multi-step loop: `classify safety concern → pull session events → match curriculum → draft debrief note → queue for instructor review`. Stops at the human-review gate.
 - **Three MCP servers** exposing typed tools the agent calls — this is the centerpiece for Track 1 scoring on "MCP to securely connect to external tools."
-- **Vue 3 + Laravel 12 instructor dashboard** (separate public repo) where the licensed instructor sees the draft, edits, approves or rejects. Demo data only.
+- **Instructor review-gate dashboard** where the licensed instructor sees the draft, edits, approves or rejects. Demo data only. The current MVP ships as a dependency-free Python web demo; Laravel/React/Inertia is the production dashboard direction after the judgeable prototype is stable.
 - **Hard human-review gate**: nothing reaches a "delivered" state without instructor sign-off. This is the regulatory boundary AND the product differentiator AND the demo's emotional beat.
 
-The product story for judges: "We use Gemini agents to delete paperwork, not to replace the licensed human in the passenger seat."
+The product story for judges: "AI organizes the moment. The instructor leads the lesson."
 
 ---
 
@@ -71,7 +71,7 @@ The product story for judges: "We use Gemini agents to delete paperwork, not to 
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│  Vue + Laravel demo dashboard  (Cloud Run)               │
+│  Browser demo dashboard  (Cloud Run target)              │
 │  - Scenario Intake                                        │
 │  - Debrief Note Review (HUMAN-REVIEW GATE — hard stop)   │
 │  - Language Access Preview                                │
@@ -116,10 +116,10 @@ All three MCP servers ship in the same Cloud Run deployment for the demo. The ag
 | Intelligence | Gemini 2.5 Pro for reasoning · Gemini 2.5 Flash for cheap classification | Mandatory tech; mixing tiers improves Tech score. Verified `gemini-2.5-flash` round-trips in `us-central1` on the project (2026-05-01); the 1.5 generation is retired. |
 | Orchestration | Google **ADK** (Python) | Mandatory tech; ADK is the headline framework Google wants showcased |
 | Tool layer | Three MCP servers (Python, FastMCP or official Google MCP) | Hits the explicit Track 1 MCP mandate |
-| Demo backend | Laravel 12 + Inertia v2 | Reuses house style; fast to build the review gate |
-| Demo frontend | Vue 3 + Tailwind 4 | Reuses house style |
+| Demo backend | Python standard-library HTTP service for MVP; Laravel later | Keeps the judge demo runnable without dependency installs |
+| Demo frontend | Dependency-free browser UI for MVP; React/Inertia later | Keeps the judge demo fast, portable, and public-safe |
 | Demo data | Cloud SQL (Postgres) with seeded fake drives | No real PII; satisfies "fake/demo data only" boundary |
-| Infra | Cloud Run (agent + MCP + Laravel demo) | Mandatory tech; cheap; one-command redeploy |
+| Infra | Cloud Run (agent + MCP-style tools + demo UI) | Mandatory tech; cheap; one-command redeploy |
 | RAG (curriculum) | Vertex AI Search OR a simple JSON+embedding fallback | "Strategically employ Grounding" — Key Considerations bullet |
 
 ---
@@ -143,7 +143,7 @@ The user asked whether the hackathon should live inside this OpenDriveEDU mono-r
 | Where | What goes there | Why |
 |---|---|---|
 | `~/PhpstormProjects/opendriveedu/.mdfiles/hackathon/` (this mono-repo, private) | Planning docs, briefs, the Codex engineering plan, the DOL-framing checklist, scratch notes | Keeps Mr. Law's planning where his other planning already lives; same Claude Code terminal/session reads it; never risks public exposure |
-| `~/PhpstormProjects/opendrive-clipboard/` (sibling folder, NEW git repo, public on GitHub) | All shipping code — agent, MCP servers, Laravel/Vue dashboard, deploy manifests, README, LICENSE, demo data | Devpost requires a public OSS repo; clean filesystem boundary makes "is this safe to publish?" a one-question check |
+| `~/PhpstormProjects/opendrive-clipboard/` (sibling folder, NEW git repo, public on GitHub) | All shipping code — agent, MCP-style tools, review-gate dashboard, deploy manifests, README, LICENSE, demo data | Devpost requires a public OSS repo; clean filesystem boundary makes "is this safe to publish?" a one-question check |
 
 ### Why not the alternatives
 
@@ -185,15 +185,15 @@ Where the two disagree, the Codex doc wins on agent count and tooling specifics;
 Every public artifact (devpost project page, demo video voice-over, README, code comments, in-product copy) must comply with Hard Rules 1, 2, 3, 6 from the DOL scrub:
 
 1. The word "coach" is reserved for the human in the passenger seat.
-2. The phrase "AI coach" is banned. So is "AI driving instructor."
-3. "Real-time" + "coaching" never appear together.
+2. Do not use role labels that imply the system teaches, instructs, evaluates readiness, or talks directly to the student.
+3. Do not pair live timing language with coaching language.
 6. **No microphone in the vehicle, ever.** Beacon never captures cabin audio.
 
 Tagline guidance for the Devpost project page (drafts to choose from):
 
-- *"An AI agent that drafts post-drive paperwork for licensed driving instructors to review and approve."*
-- *"Delete the paperwork, keep the licensed instructor."*
-- *"A Gemini agent that turns sensor data into instructor-reviewed debrief notes."*
+- *"AI organizes the moment. The instructor leads the lesson."*
+- *"Instructor-reviewed debriefs for teachable driving moments."*
+- *"A Gemini-powered workflow that turns demo driving scenarios into respectful next steps."*
 
 Banned tagline shapes: anything that says the agent "coaches," "teaches," "advises," "guides," or "assists" the student. The agent assists the **instructor**, never the student.
 
@@ -252,7 +252,7 @@ opendrive-debrief-assistant/
 │   ├── beacon_telemetry/          # 4 tools listed above
 │   ├── curriculum/                # 4 tools listed above
 │   └── instructor_review/         # 3 tools listed above
-├── dashboard/                     # Laravel 12 + Vue 3 demo app
+├── dashboard/                     # Laravel 13 + React/Inertia demo app
 │   ├── app/Http/Controllers/      # IntakeController, ReviewController, DemoLogController
 │   ├── resources/js/Pages/        # Dashboard, NewDemoEvent, DebriefNoteReview, LanguagePreview, DemoLog, Boundary
 │   ├── database/seeders/          # FakeDriveScenarioSeeder
@@ -287,7 +287,7 @@ Neither requires committing code to the mono-repo for this submission.
 | Mr. Law has parallel commitments (Move 7 doc scrub, Dan DOL meeting prep, Seattle launch, Beacon hardware bring-up) | Phase A is timeboxed to <1 week; Phases B–E are sequential with hard gates so partial completion is still demo-able |
 | Google ADK is brand-new — undocumented gotchas likely | Phase B intentionally ships only ONE working tool through the loop; expand only after that round-trip is solid |
 | Cloud Run cold starts blow the 3-min demo budget | Pre-warm Cloud Run with a synthetic request 30 s before recording; consider min-instances=1 on the agent service for the recording window only |
-| Public repo accidentally leaks DOL-misread phrases | Run the existing Move 2 grep gate (`AI coach\|AI driving instructor\|personal AI\|Safety Coach Agent`) against the new repo before every push |
+| Public repo accidentally leaks DOL-misread phrases | Run the DOL framing grep gate against the new repo before every push |
 | The 3 already-submitted registration questions may have committed Mr. Law to a track or framing that conflicts with this plan | Resolve in Phase A: user pastes current Q+A, plan revises to align |
 | Microphone reference accidentally re-enters via Gemini-generated copy | Add `cabin\|microphone\|audio capture\|VAD\|lavalier` to the pre-push grep gate |
 | Devpost judges expect a flashier "AI does the thing live" demo than our human-in-the-loop story allows | Lean into it as the differentiator, not a limitation: the regulatory necessity IS the innovation. Frame in the demo voice-over. |
@@ -299,7 +299,7 @@ Neither requires committing code to the mono-repo for this submission.
 
 | Check | Pass criteria |
 |---|---|
-| DOL framing grep gate | `git grep -nE 'AI coach\|AI driving instructor\|personal AI\|Safety Coach Agent\|cabin mic\|cabin audio\|microphone\|lavalier'` against the new repo returns zero hits |
+| DOL framing grep gate | A grep for disallowed role labels, cabin-audio terms, and old product names returns zero hits |
 | LICENSE present and visible | `LICENSE` at repo root, mentioned in README first paragraph |
 | README explains the human-review gate as a hard requirement | Phrase "DRAFT — INSTRUCTOR REVIEW REQUIRED" appears at least once in README |
 | Hosted URL renders without auth | `curl <hosted-url>` returns 200; sample drive scenario loads in <5 s |
@@ -318,7 +318,7 @@ Neither requires committing code to the mono-repo for this submission.
 - Track 3 architectural mandates (A2A protocol, Agent Identity, Marketplace listing). Designed-in where free; not pursued.
 - Microphone or audio capture of any kind. **Hard Rule 6.** The instructor "TAG INTERVENTION" tap event is the only verbal-intervention signal in any timeline shown to judges.
 - The Move 7 doc scrub for the OpenDriveEDU mono-repo. Tracked separately under TaskList #38 and #39; this plan does not block on it.
-- Internal Vue/Laravel changes to the OpenDriveEDU mono-repo. Out of scope.
+- Internal changes to the older OpenDriveEDU mono-repo. Out of scope; new Beacon and Clipboard UI work targets React/Inertia.
 - Voice TTS, dragon voice, kiosk in-car AI audio output. Out of scope and disallowed by the project boundary.
 
 ---

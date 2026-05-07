@@ -1,16 +1,28 @@
 # OpenDrive Clipboard
 
-> **An AI agent that drafts post-drive paperwork for licensed driving instructors to review and approve.**
+> **AI organizes the moment. The instructor leads the lesson.**
 
-OpenDrive Clipboard is the **Devpost submission product** for the [Google for Startups AI Agents Challenge](https://googleforstartups.devpost.com/) (event #3197, due **June 5, 2026 5:00 PM PT**). It is the post-drive paperwork-drafting layer of the broader Street Law OpenDrive / OpenDriveEDU platform.
+OpenDrive Clipboard is the **Devpost submission product** for the [Google for Startups AI Agents Challenge](https://googleforstartups.devpost.com/) (event #3197, due **June 5, 2026 5:00 PM PT**). It helps licensed instructors turn teachable driving moments into simple, structured, evidence-informed debriefs that students can actually use.
 
-**Tagline:** *Beacon records. Clipboard reviews. The licensed instructor decides.*
+**Tagline:** *Beacon records. Clipboard drafts. The licensed instructor decides.*
+
+## Problem to solve
+
+Behind-the-wheel lessons should be learning experiences, not pass/fail moments or overwhelming correction lists.
+
+In a good drive lesson, the student practices skills and drills, learns as they go, and receives simple follow-up from the instructor: "work on this next." But in real-world instruction, two problems can happen. Some lessons drift toward evaluation-heavy instruction, where the student feels like every drive is a test. Other lessons end with too many corrections at once, leaving the student discouraged or unsure what actually matters most.
+
+Students need clear, respectful feedback they can digest. A young adult, international student, or student without strong practice support at home may need more than "brake earlier" or "watch your speed." They need to understand the specific skill to work on, why it matters, and what practice step comes next.
+
+OpenDrive Clipboard helps licensed instructors turn moments such as taking right turns too fast, missing signals, drifting into one-handed control, following too closely, or braking late into instructor-reviewed debriefs that are simple, structured, and evidence-informed.
+
+The goal is not to replace instructor judgment. The goal is to help instructors preserve the lesson, connect observations to specific skills, and send students home with respectful next steps.
 
 ---
 
 ## What it does
 
-Clipboard receives a fake / demo post-drive scenario (late braking near a crosswalk, residential speed creep, yellow-light indecision, etc.) and turns it into an **instructor-ready draft debrief note** with:
+OpenDrive Clipboard receives a fake / demo post-drive scenario, such as late braking near a crosswalk, residential speed creep, following too closely, missed signaling, right turns taken too fast, or yellow-light indecision. It turns that moment into an **instructor-ready draft debrief** with:
 
 - Safety summary
 - Observed safety concern
@@ -37,33 +49,44 @@ The agent is sold to driving schools, not to teen drivers, families, or car manu
 | Product | Role | Repository |
 |---|---|---|
 | **OpenDrive Beacon** | In-vehicle sensor stack (CAN, IMU, GPS, forward camera) — passive recorder, no microphone | private mono-repo |
-| **OpenDrive Clipboard** *(this repo)* | Post-drive paperwork-drafting agent (Gemini ADK + 3 MCP servers + Vue/Laravel review-gate UI) | this repo |
+| **OpenDrive Clipboard** *(this repo)* | Post-drive debrief drafting and review agent (Gemini ADK + MCP-style tools + instructor review-gate UI) | this repo |
 
 OpenDrive is the company / umbrella brand sitting above both products.
 
 ---
 
-## Status — Phase A bootstrap (2026-05-01)
+## Status — Synthetic MVP
 
-This is a fresh public repository. **Code is not in this commit.** It will land across Phases B → E:
+This repository now includes a dependency-free synthetic MVP:
 
-| Phase | Window | Deliverable |
-|---|---|---|
-| **A — Setup** *(now)* | now → May 7 (kickoff) | repo seeded with LICENSE, README, BOUNDARY, planning docs |
-| **B — Agent skeleton** | May 7 → May 14 | Gemini ADK agent calls 1 MCP server (`beacon-telemetry-tools`) and emits a draft string |
-| **C — Full agent loop** | May 14 → May 21 | All 3 MCP servers up; agent does `classify → retrieve → draft → queue` end-to-end |
-| **D — Cloud deploy** | May 21 → May 28 | Cloud Run deploy of agent + MCP + Laravel review-gate dashboard |
-| **E — Polish & ship** | May 28 → June 5 | Demo video, README polish, screenshots, Devpost form submitted by **June 4 EOD** (24-hour buffer) |
+- Python agent-like workflow with specialized modules for scenario intake, curriculum retrieval, draft assembly, and review gate.
+- MCP-style typed tools for synthetic drive context, lesson context, draft creation, and instructor review decisions.
+- Browser demo UI served by a tiny Python HTTP server.
+- Synthetic scenarios only; no real OpenDrive Beacon records, student PII, or official LMS writes.
+- Optional Gemini API provider guarded behind environment variables. The deterministic local provider is the default for reliable judge testing.
 
-See `docs/SUBMISSION_PLAN.md` for the full plan, `docs/ENGINEERING_PLAN.md` for the agent architecture, and `docs/PRODUCT_BRIEF.md` for the product spec.
+Run locally:
+
+```bash
+python3 -m unittest discover -s tests
+python3 -m opendrive_clipboard.server --host 127.0.0.1 --port 8080
+```
+
+Open:
+
+```text
+http://127.0.0.1:8080
+```
+
+See `docs/DEVPOST_SUBMISSION.md` for the submission copy, `docs/SUBMISSION_PLAN.md` for the full plan, `docs/ENGINEERING_PLAN.md` for the agent architecture, and `docs/PRODUCT_BRIEF.md` for the product spec.
 
 ---
 
-## Architecture (planned)
+## Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│  Vue + Laravel demo dashboard  (Cloud Run)               │
+│  Browser demo UI  (Cloud Run target)                     │
 │  - Scenario Intake                                        │
 │  - Debrief Note Review (HUMAN-REVIEW GATE — hard stop)   │
 │  - Language Access Preview                                │
@@ -73,7 +96,7 @@ See `docs/SUBMISSION_PLAN.md` for the full plan, `docs/ENGINEERING_PLAN.md` for 
                          │
                          ▼
 ┌──────────────────────────────────────────────────────────┐
-│  Gemini ADK Agent  (Python, Cloud Run, Gemini 2.5 Pro)   │
+│  Python agent workflow  (ADK-ready, Gemini optional)     │
 │  Loop: plan → MCP tool call → reflect → ... → stop       │
 └──────────────────────────────────────────────────────────┘
                          │
@@ -97,7 +120,7 @@ These are non-negotiable and will not change:
 2. **No microphone.** The vehicle cabin is never recorded.
 3. **`DRAFT — INSTRUCTOR REVIEW REQUIRED`** appears on every agent output. Approval is required before any delivery.
 4. **Demo data only in this repo.** No live student records, no PII, no production OpenDrive Beacon secrets.
-5. **The agent assists the instructor, never the student.** Clipboard is not an "AI coach", "AI driving instructor", or "personal AI tutor". Those phrasings are banned.
+5. **The agent assists the instructor, never the student.** Clipboard is a post-drive drafting aid, not an automated instructor, automated evaluator, or student tutor.
 
 See `docs/BOUNDARY.md` for the full statement.
 

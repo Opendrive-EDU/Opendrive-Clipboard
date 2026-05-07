@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>OpenDrive Clipboard Demo</title>
+        <link rel="stylesheet" href="/styles.css">
+    </head>
+    <body>
+        <main class="shell">
+            <header class="hero">
+                <div>
+                    <p class="eyebrow">Google for Startups AI Agents Challenge - Build track</p>
+                    <h1>OpenDrive Clipboard</h1>
+                    <p class="lede">
+                        AI organizes the moment. The instructor leads the lesson.
+                    </p>
+                </div>
+                <div class="status-card">
+                    <strong>DRAFT - INSTRUCTOR REVIEW REQUIRED</strong>
+                    <span>The assistant drafts. The instructor decides.</span>
+                </div>
+            </header>
+
+            <section class="grid two">
+                <article class="panel">
+                    <p class="eyebrow">Scenario Intake</p>
+                    <h2>Run a synthetic drive scenario</h2>
+                    <label for="scenario">Demo scenario</label>
+                    <select id="scenario"></select>
+
+                    <label for="notes">Instructor notes</label>
+                    <textarea id="notes" rows="5">Learner recovered after the prompt and needs one more pass with earlier risk naming.</textarea>
+
+                    <button id="run-demo" type="button">Run OpenDrive Clipboard Agent</button>
+                    <p class="microcopy">Synthetic data only. No real OpenDrive Beacon records, student PII, or official LMS records.</p>
+                </article>
+
+                <article class="panel">
+                    <p class="eyebrow">Bounded Action</p>
+                    <h2>What the agent is allowed to do</h2>
+                    <ul class="check-list">
+                        <li>Read fake OpenDrive Beacon-like context.</li>
+                        <li>Retrieve reviewed curriculum snippets.</li>
+                        <li>Assemble debrief artifacts.</li>
+                        <li>Route the draft to instructor review.</li>
+                    </ul>
+                    <p class="boundary">It must not auto-submit LMS, licensing, certificate, transcript, or DOL records.</p>
+                </article>
+            </section>
+
+            <section class="grid two">
+                <article class="panel">
+                    <p class="eyebrow">Agent Trace</p>
+                    <h2>Specialized agents and MCP-style tools</h2>
+                    <div id="trace" class="trace empty">Run a scenario to see the trace.</div>
+                </article>
+
+                <article class="panel">
+                    <p class="eyebrow">Instructor Review Gate</p>
+                    <h2>Review decision</h2>
+                    <div id="review-state" class="review-state">No draft yet.</div>
+                    <div class="review-buttons">
+                        <button data-decision="approve" type="button">Approve</button>
+                        <button data-decision="edit" type="button">Edit</button>
+                        <button data-decision="reject" type="button">Reject</button>
+                        <button data-decision="regenerate" type="button">Regenerate</button>
+                    </div>
+                </article>
+            </section>
+
+            <section class="panel">
+                <p class="eyebrow">Draft Artifacts</p>
+                <div id="draft" class="draft empty">No draft yet.</div>
+            </section>
+
+            <section class="panel">
+                <p class="eyebrow">Boundary</p>
+                <h2>Fake data, post-drive only, instructor-reviewed</h2>
+                <p>
+                    OpenDrive Clipboard is not a licensing, grading, diagnostic, enforcement, vehicle-control,
+                    or student-facing instruction tool. The public demo uses synthetic data only.
+                </p>
+            </section>
+        </main>
+        <script src="/app.js"></script>
+    </body>
+</html>

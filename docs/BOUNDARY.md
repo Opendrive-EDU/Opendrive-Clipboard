@@ -10,22 +10,22 @@ This document is the regulatory boundary statement for **OpenDrive Clipboard** (
 
 ## One sentence
 
-OpenDrive Clipboard is a **post-drive paperwork-drafting agent** that produces drafts for a licensed human instructor to review and approve. The licensed instructor is, and remains, the **sole authority** during all behind-the-wheel sessions and over all delivered output.
+OpenDrive Clipboard is a **post-drive debrief drafting agent** that produces drafts for a licensed human instructor to review and approve. The licensed instructor is, and remains, the **sole authority** during all behind-the-wheel sessions and over all delivered output.
 
 ---
 
 ## What OpenDrive Clipboard IS
 
-- A **Gemini ADK agent + 3 MCP servers + Vue/Laravel review-gate UI** that runs on Cloud Run.
-- A **drafting assistant** for the licensed instructor: it organizes a post-drive scenario into an instructor-ready draft note (safety summary, observed safety concern, suggested lesson focus, reflection prompt, practice assignment, language-access preview).
+- A **Gemini / ADK-ready agent workflow + MCP-style tools + review-gate UI** that can run on Cloud Run.
+- A **drafting assistant** for the licensed instructor: it organizes a post-drive teachable moment into an instructor-ready draft debrief (safety summary, observed safety concern, suggested lesson focus, reflection prompt, practice assignment, language-access preview).
 - A **demo-data-only system in this repository.** All scenarios are fake / seeded. No real student records, no real PII, no live OpenDrive Beacon production data, no Vault secrets.
-- A **research-and-paperwork-reduction tool**: it deletes the paperwork burden so the licensed instructor spends time teaching, not typing.
+- A **teachable-moment preservation tool**: it helps the instructor connect observations to specific skills and respectful next steps without turning the debrief into criticism or shame.
 
 ## What OpenDrive Clipboard IS NOT
 
-- **Not an AI driving instructor.** It does not deliver instruction. It does not speak to the student in the vehicle. It does not exist in the cabin during the drive.
+- **Not an automated driving instructor.** It does not deliver instruction. It does not speak to the student in the vehicle. It does not exist in the cabin during the drive.
 - **Not a coach.** The word "coach" is reserved for the human in the passenger seat. Clipboard does not coach.
-- **Not a real-time system.** Clipboard runs **after** the lesson ends. It is not a real-time coaching, intervention, or driver-assist system.
+- **Not a real-time system.** Clipboard runs **after** the lesson ends. It is not a live intervention or driver-assist system.
 - **Not a vehicle-control or driver-assist system.** It does not touch brakes, throttle, steering, signals, or any vehicle subsystem.
 - **Not a licensing or grading authority.** It does not issue, recommend, or influence pass/fail decisions. WA DOL standards apply; the licensed instructor evaluates.
 - **Not a student-facing surveillance tool.** Outputs are reviewed and approved by the licensed instructor of record, governed by school policy and parental consent.
