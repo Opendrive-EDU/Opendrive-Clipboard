@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>OpenDrive Clipboard - DOL Drive Sheet Draft</title>
+        <link rel="stylesheet" href="/styles.css">
+    </head>
+    <body>
+        <main class="shell">
+            <header class="hero">
+                <div>
+                    <p class="eyebrow">WA DOL DTS-661-047 (N/12/24) - Drafted by AI, signed by the licensed instructor</p>
+                    <h1>Drive Sheet Draft</h1>
+                    <p class="lede">
+                        The Clipboard agent drafts a 1-4 rating for every DOL skill row,
+                        plus a blood-panel snapshot, eco score, driver attitude profile,
+                        and a Section 3 comment draft. The licensed instructor reviews,
+                        edits, and signs. Nothing here is an official record.
+                    </p>
+                </div>
+                <div class="status-card">
+                    <strong>DRAFT - INSTRUCTOR REVIEW REQUIRED</strong>
+                    <span>NO MICROPHONE - EVER. Synthetic Beacon telemetry only.</span>
+                </div>
+            </header>
+
+            <section class="panel">
+                <p class="eyebrow">Scenario</p>
+                <h2>Pick a synthetic drive and run the grader</h2>
+                <label for="scenario">Demo scenario</label>
+                <select id="scenario"></select>
+                <button id="run-grader" type="button">Run DOL drive-sheet grader</button>
+                <p class="microcopy">
+                    Numbers are deterministic per scenario. The optional Gemini provider only varies
+                    prose; it never alters a 1-4 rating or a blood-panel value.
+                </p>
+            </section>
+
+            <section id="report" class="report-shell hidden">
+                <section class="panel">
+                    <p class="eyebrow">Section 1 - Drive Log</p>
+                    <h2 id="report-title">-</h2>
+                    <div id="section-one" class="section-one"></div>
+                </section>
+
+                <section class="grid two">
+                    <article class="panel">
+                        <p class="eyebrow">Beacon snapshot</p>
+                        <h2>Synthetic CAN / IMU / GPS / camera labels</h2>
+                        <div id="beacon-strip" class="beacon-strip"></div>
+                        <p class="microcopy">
+                            <strong>No microphone, no cabin audio.</strong>
+                            Forward camera carries text labels only; no images, no URLs.
+                        </p>
+                    </article>
+
+                    <article class="panel">
+                        <p class="eyebrow">Blood panel</p>
+                        <h2>Clinical-style metrics with reference ranges</h2>
+                        <table id="blood-panel" class="blood-panel">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                    <th>Reference</th>
+                                    <th>Flag</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </article>
+                </section>
+
+                <section class="grid two">
+                    <article class="panel">
+                        <p class="eyebrow">Eco score</p>
+                        <h2>Synthetic fuel/momentum efficiency estimate</h2>
+                        <div id="eco-gauge" class="eco-gauge"></div>
+                    </article>
+
+                    <article class="panel">
+                        <p class="eyebrow">Driver attitude</p>
+                        <h2>Calm vs tentative vs aggressive (telemetry-derived)</h2>
+                        <div id="attitude-bar" class="attitude-bar"></div>
+                    </article>
+                </section>
+
+                <section class="panel">
+                    <p class="eyebrow">Section 2 - Skill Grid (suggested 1-4 ratings)</p>
+                    <h2>Instructor confirms each row</h2>
+                    <div id="skill-grid" class="skill-grid"></div>
+                </section>
+
+                <section class="grid two">
+                    <article class="panel">
+                        <p class="eyebrow">Strengths</p>
+                        <h2>What looked good in this synthetic drive</h2>
+                        <ul id="strengths" class="findings"></ul>
+                    </article>
+                    <article class="panel">
+                        <p class="eyebrow">Needs improvement</p>
+                        <h2>Coaching priority next session</h2>
+                        <ul id="gaps" class="findings"></ul>
+                    </article>
+                </section>
+
+                <section class="panel">
+                    <p class="eyebrow">Section 3 - Comments</p>
+                    <h2>Comment draft + reaction to coaching (suggested)</h2>
+                    <label for="comments-draft">Comments draft</label>
+                    <textarea id="comments-draft" rows="5"></textarea>
+                    <fieldset class="reaction-group">
+                        <legend>Reaction to coaching (suggested)</legend>
+                        <label><input type="radio" name="reaction" value="needs_improvement"> Needs improvement</label>
+                        <label><input type="radio" name="reaction" value="good"> Good</label>
+                        <label><input type="radio" name="reaction" value="excellent"> Excellent</label>
+                    </fieldset>
+                </section>
+
+                <section class="panel">
+                    <p class="eyebrow">Instructor Review Gate</p>
+                    <h2>Licensed instructor decision</h2>
+                    <div id="review-state" class="review-state">No decision recorded yet.</div>
+                    <div class="review-buttons">
+                        <button data-decision="approve" type="button">Approve</button>
+                        <button data-decision="edit" type="button">Edit</button>
+                        <button data-decision="reject" type="button">Reject</button>
+                        <button data-decision="regenerate" type="button">Regenerate</button>
+                    </div>
+                </section>
+            </section>
+
+            <section class="panel">
+                <p class="eyebrow">Boundary</p>
+                <h2>Synthetic data. Instructor-reviewed. No DOL writes.</h2>
+                <p>
+                    This page drafts WA DOL form DTS-661-047 from synthetic scenarios. It is
+                    not a licensing, grading, diagnostic, or vehicle-control tool. See
+                    <a href="/boundary">Boundary</a> and <a href="/">Clipboard demo</a>.
+                </p>
+            </section>
+        </main>
+        <script src="/drive-sheet.js"></script>
+    </body>
+</html>

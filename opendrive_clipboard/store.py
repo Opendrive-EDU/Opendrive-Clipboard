@@ -22,6 +22,7 @@ class DemoStore:
         self.glossary = language_access_glossary()
         self.runs: dict[str, dict] = {}
         self.drafts: dict[str, dict] = {}
+        self.drive_reports: dict[str, dict] = {}
 
     def list_scenarios(self) -> list[dict]:
         return [
@@ -100,6 +101,40 @@ class DemoStore:
             return deepcopy(self.runs[run_id])
         except KeyError as exc:
             raise ValueError(f"Unknown demo run: {run_id}") from exc
+
+    def save_drive_report(self, report: dict) -> dict:
+        report_id = f"drive-report-{uuid4().hex[:10]}"
+        record = {
+            **deepcopy(report),
+            "id": report_id,
+            "review_decision": None,
+            "created_at": now_iso(),
+            "updated_at": now_iso(),
+        }
+        self.drive_reports[report_id] = record
+
+        return deepcopy(record)
+
+    def get_drive_report(self, report_id: str) -> dict:
+        try:
+            return deepcopy(self.drive_reports[report_id])
+        except KeyError as exc:
+            raise ValueError(f"Unknown drive report: {report_id}") from exc
+
+    def record_drive_report_decision(self, report_id: str, decision: str) -> dict:
+        allowed = {"approve", "edit", "reject", "regenerate"}
+        if decision not in allowed:
+            raise ValueError(f"Unsupported review decision: {decision}")
+
+        report = self.get_drive_report(report_id)
+        report["review_decision"] = decision
+        report["status"] = f"preview_{decision}"
+        if decision == "approve":
+            report["status_label"] = "INSTRUCTOR APPROVED - DRAFT"
+        report["updated_at"] = now_iso()
+        self.drive_reports[report_id] = report
+
+        return deepcopy(report)
 
     def _draft(self, draft_id: str) -> dict:
         try:

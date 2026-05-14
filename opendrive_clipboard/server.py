@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 
 from opendrive_clipboard.agent import ClipboardRunner
 from opendrive_clipboard.store import DemoStore
-from opendrive_clipboard.tools import InstructorReviewTools
+from opendrive_clipboard.tools import DriveSheetTools, InstructorReviewTools
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,6 +23,7 @@ class ClipboardApp:
         self.store = DemoStore()
         self.runner = ClipboardRunner(self.store)
         self.review_tools = InstructorReviewTools(self.store)
+        self.drive_sheet_tools = DriveSheetTools(self.store)
 
     def list_scenarios(self) -> list[dict]:
         return self.store.list_scenarios()
@@ -40,6 +41,19 @@ class ClipboardApp:
         decision = payload.get("decision") or ""
 
         return self.review_tools.record_instructor_decision(draft_id, decision)
+
+    def create_drive_report(self, payload: dict) -> dict:
+        scenario_id = payload.get("scenario_id") or "residential-following-distance"
+
+        return self.drive_sheet_tools.draft_drive_report(scenario_id)
+
+    def get_drive_report(self, report_id: str) -> dict:
+        return self.store.get_drive_report(report_id)
+
+    def review_drive_report(self, report_id: str, payload: dict) -> dict:
+        decision = payload.get("decision") or ""
+
+        return self.drive_sheet_tools.record_drive_report_decision(report_id, decision)
 
 
 class ClipboardRequestHandler(BaseHTTPRequestHandler):
@@ -61,6 +75,11 @@ class ClipboardRequestHandler(BaseHTTPRequestHandler):
             self.safe_json(lambda: self.app.get_run(run_id))
             return
 
+        if path.startswith("/api/drive-reports/"):
+            report_id = path.rsplit("/", 1)[-1]
+            self.safe_json(lambda: self.app.get_drive_report(report_id))
+            return
+
         self.serve_static(path)
 
     def do_POST(self) -> None:
@@ -69,6 +88,14 @@ class ClipboardRequestHandler(BaseHTTPRequestHandler):
         if path == "/api/demo-runs":
             payload = self.read_json()
             self.safe_json(lambda: self.app.create_run(payload), status=HTTPStatus.CREATED)
+            return
+
+        if path == "/api/drive-reports":
+            payload = self.read_json()
+            self.safe_json(
+                lambda: self.app.create_drive_report(payload),
+                status=HTTPStatus.CREATED,
+            )
             return
 
         self.send_error(HTTPStatus.NOT_FOUND, "Unknown endpoint")
@@ -82,11 +109,19 @@ class ClipboardRequestHandler(BaseHTTPRequestHandler):
             self.safe_json(lambda: self.app.review_draft(draft_id, payload))
             return
 
+        if path.startswith("/api/drive-reports/") and path.endswith("/review"):
+            report_id = path.split("/")[-2]
+            payload = self.read_json()
+            self.safe_json(lambda: self.app.review_drive_report(report_id, payload))
+            return
+
         self.send_error(HTTPStatus.NOT_FOUND, "Unknown endpoint")
 
     def serve_static(self, path: str) -> None:
         if path in {"/", "/demo", "/boundary"}:
             file_path = WEB_ROOT / "index.html"
+        elif path == "/drive-sheet":
+            file_path = WEB_ROOT / "drive-sheet.html"
         else:
             file_path = (WEB_ROOT / path.lstrip("/")).resolve()
             if WEB_ROOT not in file_path.parents and file_path != WEB_ROOT:

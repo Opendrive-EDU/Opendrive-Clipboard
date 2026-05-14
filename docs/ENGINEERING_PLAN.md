@@ -1090,3 +1090,67 @@ No AI instructor.
 
 The reviewed demo log may save only after instructor approval.
 ```
+
+---
+
+## DOL Drive Sheet Grader (added 2026-05-13)
+
+A second drafting artifact runs alongside the debrief: a **DOL-aligned drive
+sheet draft + detailed student report**, modeled on WA DOL form **DTS-661-047
+(N/12/24)** "Driver Training School Behind-the-Wheel Instruction Log"
+(`docs/dol drive sheet.pdf`). The form has three sections — §1 drive log, §2
+skill grid rated 1-4, §3 comments + reaction to coaching. Licensed instructors
+already fill this by hand after every BTW lesson; Clipboard drafts it.
+
+**Modules.**
+- `opendrive_clipboard/dol_sheet.py` — canonical form constants
+  (51 skill rows in form order, 1-4 rating scale verbatim from the DOL rubric,
+  scenario-pattern → DOL-skill mapping).
+- `opendrive_clipboard/beacon_demo.py` — deterministic synthetic Beacon
+  recording (CAN, IMU, GPS, forward-camera text labels, intervention taps).
+  `meta.has_audio` is always `False`; no `audio` / `microphone` / `cabin`
+  keys exist anywhere in the payload.
+- `opendrive_clipboard/grader.py` — deterministic rule-based grader that
+  produces: §2 skill ratings with rationales, a blood-panel snapshot
+  (smooth braking, throttle smoothness, mean following distance, peak
+  lateral accel, mirror cadence, intervention count, lane-position variance,
+  each with a reference range and an ok/watch/concern flag), an eco score
+  (0-100, three bands), a calm/tentative/aggressive attitude profile that
+  sums to 100, strengths/gaps lists, and a §3 comments draft + suggested
+  reaction-to-coaching value.
+- `opendrive_clipboard/tools.py::DriveSheetTools` — MCP-style wrapper.
+- `opendrive_clipboard/agent.py::DriveSheetGraderAgent` — adds a single
+  trace entry and attaches `drive_report` to the run payload.
+
+**Deterministic numbers + optional Gemini prose split.**
+Every 1-4 rating and every blood-panel number is computed by deterministic
+rules over the synthetic telemetry. Two runs against the same scenario id
+produce byte-identical JSON (guarded by tests). The existing optional Gemini
+provider remains constrained to prose generation only — it never alters a
+rating or a panel value. This preserves judge-reproducibility while leaving
+room for richer narrative when a key is configured.
+
+**Hard boundaries restated in code.**
+- Every report ships with `status = DRAFT_INSTRUCTOR_REVIEW_REQUIRED` and
+  `instructor_review_required = True`.
+- Every payload carries `has_audio: False` and a `no_microphone_disclosure`
+  string, both greppable.
+- The grader does not write to DOL, an LMS, a transcript, or a certificate.
+  It drafts a form for the licensed instructor to review.
+- The blood panel, eco score, and attitude profile carry explicit
+  "synthetic, derived from mock telemetry" disclosures.
+
+**Server surface.**
+- `GET /drive-sheet` — the workspace page.
+- `POST /api/drive-reports` — runs the grader for a scenario.
+- `GET /api/drive-reports/<id>` — fetches a saved draft.
+- `PATCH /api/drive-reports/<id>/review` — records the instructor decision.
+
+**UI.**
+`web/drive-sheet.html` + `web/drive-sheet.js` render the synthetic Beacon
+strip, the §1 drive log card, the §2 skill grid (collapsible by group, with
+rationale tooltips and instructor-override dropdowns), the blood-panel table,
+an SVG eco gauge, the attitude bar, strengths/gaps, the §3 comment textarea
+with reaction-to-coaching radios, and the Approve / Edit / Reject / Regenerate
+review-gate buttons. No external assets, no chart library.
+

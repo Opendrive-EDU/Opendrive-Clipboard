@@ -11,6 +11,7 @@ from opendrive_clipboard.store import DemoStore
 from opendrive_clipboard.tools import (
     CurriculumTools,
     DriveContextTools,
+    DriveSheetTools,
     InstructorReviewTools,
 )
 
@@ -243,6 +244,26 @@ class GeminiDraftProvider(LocalDraftProvider):
         )
 
 
+class DriveSheetGraderAgent:
+    """Drafts a DOL-aligned drive report for instructor review."""
+
+    def __init__(self, tools: DriveSheetTools) -> None:
+        self.tools = tools
+
+    def run(self, scenario_id: str) -> tuple[dict, list[TraceEntry]]:
+        report = self.tools.draft_drive_report(scenario_id)
+
+        return report, [
+            TraceEntry(
+                "Drive Sheet Grader Agent",
+                "drive_sheet.draft_drive_report",
+                "draft",
+                "Drafted WA DOL DTS-661-047 ratings + blood panel + report. "
+                "Awaiting licensed instructor review.",
+            )
+        ]
+
+
 class ClipboardRunner:
     """Coordinates the synthetic multi-agent OpenDrive Clipboard workflow."""
 
@@ -255,11 +276,13 @@ class ClipboardRunner:
         drive_tools = DriveContextTools(self.store)
         curriculum_tools = CurriculumTools(self.store)
         review_tools = InstructorReviewTools(self.store)
+        drive_sheet_tools = DriveSheetTools(self.store)
 
         self.scenario_intake = ScenarioIntakeAgent(drive_tools)
         self.curriculum_retrieval = CurriculumRetrievalAgent(curriculum_tools)
         self.draft_assembly = DraftAssemblyAgent(draft_provider or GeminiDraftProvider())
         self.review_gate = ReviewGateAgent(review_tools)
+        self.drive_sheet_grader = DriveSheetGraderAgent(drive_sheet_tools)
 
     def run(self, scenario_id: str, instructor_notes: str = "") -> dict:
         trace: list[TraceEntry] = []
@@ -280,11 +303,15 @@ class ClipboardRunner:
         draft, entries = self.review_gate.run(draft_payload)
         trace.extend(entries)
 
+        drive_report, entries = self.drive_sheet_grader.run(scenario_id)
+        trace.extend(entries)
+
         run = self.store.create_run(
             {
                 "scenario": scenario,
                 "curriculum": curriculum,
                 "draft": draft,
+                "drive_report": drive_report,
                 "trace": [entry.to_dict() for entry in trace],
                 "safety_boundary": {
                     "demo_only_no_real_beacon_data": True,

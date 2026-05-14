@@ -41,6 +41,32 @@ class ClipboardServerTest(unittest.TestCase):
         )
         self.assertEqual(reviewed["review_decision"], "reject")
 
+    def test_drive_sheet_grader_endpoints(self):
+        report = self.post_json(
+            "/api/drive-reports",
+            {"scenario_id": "residential-following-distance"},
+        )
+        self.assertEqual(report["status"], "DRAFT_INSTRUCTOR_REVIEW_REQUIRED")
+        self.assertFalse(report["has_audio"])
+        self.assertIn("blood_panel", report)
+        self.assertIn("skill_ratings", report)
+
+        fetched = self.get_json(f"/api/drive-reports/{report['id']}")
+        self.assertEqual(fetched["id"], report["id"])
+
+        reviewed = self.patch_json(
+            f"/api/drive-reports/{report['id']}/review",
+            {"decision": "approve"},
+        )
+        self.assertEqual(reviewed["review_decision"], "approve")
+        self.assertEqual(reviewed["status_label"], "INSTRUCTOR APPROVED - DRAFT")
+
+    def test_drive_sheet_page_serves_html(self):
+        with urllib.request.urlopen(self.base_url + "/drive-sheet", timeout=5) as response:
+            body = response.read().decode("utf-8")
+        self.assertIn("Drive Sheet Draft", body)
+        self.assertIn("DRAFT - INSTRUCTOR REVIEW REQUIRED", body)
+
     def get_json(self, path):
         with urllib.request.urlopen(self.base_url + path, timeout=5) as response:
             return json.loads(response.read().decode("utf-8"))

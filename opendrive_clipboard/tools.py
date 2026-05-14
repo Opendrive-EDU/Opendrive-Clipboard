@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 
+from opendrive_clipboard.grader import grade_drive
 from opendrive_clipboard.store import DemoStore
 
 
@@ -68,6 +69,22 @@ class InstructorReviewTools:
 
     def record_instructor_decision(self, draft_id: str, decision: str) -> dict:
         return self.store.record_decision(draft_id, decision)
+
+
+class DriveSheetTools:
+    """Draft and review WA DOL drive-sheet artifacts (demo-only)."""
+
+    def __init__(self, store: DemoStore) -> None:
+        self.store = store
+
+    def draft_drive_report(self, scenario_id: str) -> dict:
+        report = grade_drive(scenario_id)
+        guard_demo_payload(report)
+
+        return self.store.save_drive_report(report)
+
+    def record_drive_report_decision(self, report_id: str, decision: str) -> dict:
+        return self.store.record_drive_report_decision(report_id, decision)
 
 
 def guard_demo_payload(payload: object) -> None:
