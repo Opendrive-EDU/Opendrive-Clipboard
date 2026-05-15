@@ -1,8 +1,86 @@
+/* === OpenDrive Clipboard demo styles ==================================== */
+/* Bold indigo/pink palette. Brand colors hold across light and dark mode;  */
+/* neutrals flip automatically via prefers-color-scheme. No JS, no toggle.  */
+
 :root {
-    color-scheme: light;
+    color-scheme: light dark;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #eef4f8;
-    color: #0f172a;
+
+    /* Brand — stable across modes */
+    --brand-fill: #4f46e5;          /* indigo-600 — primary buttons, accent strip */
+    --brand-fill-hover: #4338ca;    /* indigo-700 */
+    --brand-tint: rgb(79 70 229 / 0.08);
+    --pink: #ec4899;                /* rubix pink — DRAFT pill, Approve CTA */
+    --pink-hover: #db2777;
+
+    /* Light-mode neutrals (default) */
+    --bg: #f5f7ff;
+    --surface: #ffffff;
+    --surface-soft: #f8fafc;
+    --surface-sunken: #f1f5f9;
+    --surface-tint: #eef2ff;
+    --border-strong: #d5e3ee;
+    --border-mid: #cbd5e1;
+    --border-soft: #e2e8f0;
+    --text: #0f172a;
+    --text-strong: #334155;
+    --text-mid: #475569;
+    --text-mute: #64748b;
+    --text-faint: #94a3b8;
+    --brand-text: #4f46e5;
+    --shadow-card: 0 12px 28px rgb(15 23 42 / 0.06);
+    --shadow-lift: 0 16px 32px rgb(79 70 229 / 0.12);
+
+    /* Semantic (light) */
+    --ok-bg: #ecfeff;
+    --ok-text: #155e75;
+    --watch-bg: #fef3c7;
+    --watch-text: #854d0e;
+    --concern-bg: #fee2e2;
+    --concern-text: #991b1b;
+    --good-bg: #dcfce7;
+    --good-text: #166534;
+    --info-bg: #cffafe;
+    --info-text: #155e75;
+    --rule-ok: #0891b2;
+    --rule-watch: #d97706;
+    --rule-concern: #dc2626;
+
+    background: var(--bg);
+    color: var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0b1020;
+        --surface: #172033;
+        --surface-soft: #1f2b46;
+        --surface-sunken: #0f172a;
+        --surface-tint: rgb(79 70 229 / 0.15);
+        --border-strong: rgb(79 70 229 / 0.28);
+        --border-mid: rgb(148 163 184 / 0.22);
+        --border-soft: rgb(148 163 184 / 0.18);
+        --text: #e2e8f0;
+        --text-strong: #f1f5f9;
+        --text-mid: #cbd5e1;
+        --text-mute: #94a3b8;
+        --text-faint: #64748b;
+        --brand-text: #a5b4fc;
+        --brand-tint: rgb(129 140 248 / 0.12);
+        --shadow-card: 0 12px 32px rgb(0 0 0 / 0.45);
+        --shadow-lift: 0 16px 32px rgb(79 70 229 / 0.35);
+
+        --ok-bg: rgb(8 145 178 / 0.18);
+        --ok-text: #67e8f9;
+        --watch-bg: rgb(217 119 6 / 0.22);
+        --watch-text: #fcd34d;
+        --concern-bg: rgb(220 38 38 / 0.22);
+        --concern-text: #fca5a5;
+        --good-bg: rgb(22 163 74 / 0.22);
+        --good-text: #86efac;
+        --info-bg: rgb(8 145 178 / 0.22);
+        --info-text: #67e8f9;
+    }
 }
 
 * {
@@ -21,10 +99,11 @@ body {
 
 .hero,
 .panel {
-    border: 1px solid #d5e3ee;
-    border-radius: 8px;
-    background: #ffffff;
-    box-shadow: 0 12px 28px rgb(15 23 42 / 0.06);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    background: var(--surface);
+    /* Inset 4px brand-color strip on top + drop shadow */
+    box-shadow: inset 0 4px 0 var(--brand-fill), var(--shadow-card);
 }
 
 .hero {
@@ -32,11 +111,23 @@ body {
     grid-template-columns: 1fr minmax(260px, 360px);
     gap: 24px;
     align-items: end;
-    padding: 28px;
+    padding: 32px 28px 28px;
+}
+
+.hero-logo {
+    display: block;
+    margin: 0 0 14px;
+    border-radius: 12px;
 }
 
 .panel {
-    padding: 22px;
+    padding: 26px 22px 22px;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.panel:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 4px 0 var(--brand-fill), var(--shadow-lift);
 }
 
 .grid {
@@ -51,10 +142,10 @@ body {
 
 .eyebrow {
     margin: 0 0 10px;
-    color: #0369a1;
+    color: var(--brand-text);
     font-size: 12px;
     font-weight: 800;
-    letter-spacing: 0;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
 }
 
@@ -66,31 +157,35 @@ p {
 
 h1 {
     margin-bottom: 12px;
+    color: var(--brand-text);
     font-size: clamp(34px, 5vw, 56px);
-    line-height: 1;
-    letter-spacing: 0;
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
 }
 
 h2 {
     margin-bottom: 14px;
+    color: var(--text);
     font-size: 18px;
-    letter-spacing: 0;
+    letter-spacing: -0.01em;
 }
 
 .lede {
     max-width: 720px;
-    color: #475569;
+    color: var(--text-mid);
     font-size: 17px;
     line-height: 1.7;
 }
 
-.status-card,
-.review-state,
-.boundary {
-    border: 1px solid #bae6fd;
+/* DRAFT pill — the safety claim. Pink fill, dominates the hero. */
+.status-card {
+    border: 1px solid var(--pink);
     border-radius: 8px;
-    background: #ecfeff;
+    background: var(--pink);
+    color: #ffffff;
     padding: 16px;
+    box-shadow: 0 10px 24px rgb(236 72 153 / 0.28);
 }
 
 .status-card strong,
@@ -98,48 +193,82 @@ h2 {
     display: block;
 }
 
+.status-card strong {
+    font-size: 14px;
+    letter-spacing: 0.04em;
+}
+
 .status-card span {
     margin-top: 8px;
-    color: #475569;
+    color: rgb(255 255 255 / 0.86);
+    font-size: 13px;
     line-height: 1.5;
+}
+
+/* Informational tints — not the safety claim */
+.review-state,
+.boundary {
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface-tint);
+    color: var(--text);
+    padding: 16px;
 }
 
 label {
     display: block;
     margin: 14px 0 6px;
-    color: #334155;
+    color: var(--text-strong);
     font-size: 13px;
     font-weight: 800;
+    letter-spacing: 0.02em;
 }
 
 select,
 textarea,
 button {
     width: 100%;
-    border-radius: 7px;
+    border-radius: 8px;
     font: inherit;
 }
 
 select,
 textarea {
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border-mid);
     padding: 11px 12px;
-    color: #0f172a;
-    background: #f8fafc;
+    color: var(--text);
+    background: var(--surface-soft);
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--brand-fill);
+    box-shadow: 0 0 0 3px var(--brand-tint);
 }
 
 button {
     border: 0;
     margin-top: 16px;
     padding: 12px 14px;
-    background: #0891b2;
+    background: var(--brand-fill);
     color: #ffffff;
     font-weight: 800;
+    letter-spacing: 0.01em;
     cursor: pointer;
+    transition: background 120ms ease, transform 120ms ease, box-shadow 120ms ease;
 }
 
 button:hover {
-    background: #0e7490;
+    background: var(--brand-fill-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgb(79 70 229 / 0.25);
+}
+
+button:focus-visible {
+    outline: 3px solid var(--brand-tint);
+    outline-offset: 2px;
 }
 
 .review-buttons {
@@ -148,13 +277,37 @@ button:hover {
     gap: 10px;
 }
 
+/* Review-gate hierarchy: Approve is the "moment of trust" — pink fill.    */
+/* Edit / Reject / Regenerate are indigo outlines (secondary actions).    */
 .review-buttons button {
-    background: #0f172a;
+    background: transparent;
+    color: var(--brand-text);
+    border: 1.5px solid var(--brand-text);
+}
+
+.review-buttons button:hover {
+    background: var(--brand-tint);
+    color: var(--brand-fill-hover);
+    box-shadow: none;
+    transform: translateY(-1px);
+}
+
+.review-buttons button[data-decision="approve"] {
+    background: var(--pink);
+    border-color: var(--pink);
+    color: #ffffff;
+}
+
+.review-buttons button[data-decision="approve"]:hover {
+    background: var(--pink-hover);
+    border-color: var(--pink-hover);
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgb(236 72 153 / 0.32);
 }
 
 .microcopy,
 .empty {
-    color: #64748b;
+    color: var(--text-mute);
     font-size: 13px;
     line-height: 1.6;
 }
@@ -168,11 +321,10 @@ button:hover {
 }
 
 .check-list li,
-.trace-row,
 .draft-section {
-    border: 1px solid #e2e8f0;
-    border-radius: 7px;
-    background: #f8fafc;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    background: var(--surface-soft);
     padding: 12px;
 }
 
@@ -181,13 +333,22 @@ button:hover {
     gap: 10px;
 }
 
+.trace-row {
+    border: 1px solid var(--border-soft);
+    border-left: 3px solid var(--brand-fill);
+    border-radius: 8px;
+    background: var(--surface-soft);
+    padding: 12px;
+}
+
 .trace-row strong {
     display: block;
     margin-bottom: 4px;
+    color: var(--text);
 }
 
 .trace-row span {
-    color: #475569;
+    color: var(--text-mid);
     line-height: 1.5;
 }
 
@@ -198,12 +359,13 @@ button:hover {
 
 .draft-section h3 {
     margin: 0 0 8px;
+    color: var(--text);
     font-size: 15px;
 }
 
 .draft-section p {
     margin-bottom: 0;
-    color: #475569;
+    color: var(--text-mid);
     line-height: 1.65;
 }
 
@@ -218,7 +380,7 @@ button:hover {
     }
 }
 
-/* --- Drive sheet view --------------------------------------------------- */
+/* --- Drive sheet view ----------------------------------------------------- */
 
 .hidden {
     display: none;
@@ -240,19 +402,19 @@ button:hover {
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: 7px;
-    background: #f8fafc;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    background: var(--surface-soft);
     padding: 8px 12px;
 }
 
 .meta-row strong {
-    color: #334155;
+    color: var(--text-strong);
     font-size: 13px;
 }
 
 .meta-row span {
-    color: #475569;
+    color: var(--text-mid);
     font-size: 13px;
     text-align: right;
 }
@@ -265,23 +427,24 @@ button:hover {
 .strip-row {
     display: flex;
     justify-content: space-between;
-    border: 1px solid #e2e8f0;
-    border-radius: 7px;
-    background: #f8fafc;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    background: var(--surface-soft);
     padding: 8px 12px;
     font-size: 13px;
+    color: var(--text);
 }
 
 .strip-subtitle {
     margin: 10px 0 4px;
     font-size: 13px;
-    color: #334155;
+    color: var(--text-strong);
 }
 
 .strip-list {
     margin: 0;
     padding-left: 18px;
-    color: #475569;
+    color: var(--text-mid);
     font-size: 13px;
     line-height: 1.6;
 }
@@ -294,22 +457,23 @@ button:hover {
 
 .blood-panel th,
 .blood-panel td {
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-soft);
     padding: 8px 10px;
     text-align: left;
-    color: #334155;
+    color: var(--text-strong);
 }
 
 .blood-panel th {
-    background: #f1f5f9;
+    background: var(--surface-sunken);
     font-weight: 800;
     text-transform: uppercase;
     font-size: 11px;
     letter-spacing: 0.04em;
+    color: var(--text-strong);
 }
 
 .unit {
-    color: #94a3b8;
+    color: var(--text-faint);
     font-size: 12px;
 }
 
@@ -323,30 +487,30 @@ button:hover {
 }
 
 .flag-ok {
-    background: #ecfeff;
-    color: #155e75;
+    background: var(--ok-bg);
+    color: var(--ok-text);
 }
 
 .flag-watch {
-    background: #fef3c7;
-    color: #854d0e;
+    background: var(--watch-bg);
+    color: var(--watch-text);
 }
 
 .flag-concern {
-    background: #fee2e2;
-    color: #991b1b;
+    background: var(--concern-bg);
+    color: var(--concern-text);
 }
 
 tr.flag-concern td:first-child {
-    border-left: 3px solid #dc2626;
+    border-left: 3px solid var(--rule-concern);
 }
 
 tr.flag-watch td:first-child {
-    border-left: 3px solid #d97706;
+    border-left: 3px solid var(--rule-watch);
 }
 
 tr.flag-ok td:first-child {
-    border-left: 3px solid #0891b2;
+    border-left: 3px solid var(--rule-ok);
 }
 
 .eco-gauge {
@@ -361,10 +525,11 @@ tr.flag-ok td:first-child {
 .eco-readout {
     margin-top: 6px;
     font-size: 16px;
-    color: #0f172a;
+    color: var(--text);
 }
 
 .eco-readout strong {
+    color: var(--brand-text);
     font-size: 22px;
 }
 
@@ -373,7 +538,7 @@ tr.flag-ok td:first-child {
     height: 18px;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-soft);
 }
 
 .attitude-segment {
@@ -394,7 +559,7 @@ tr.flag-ok td:first-child {
     display: flex;
     align-items: center;
     gap: 6px;
-    color: #475569;
+    color: var(--text-mid);
 }
 
 .swatch {
@@ -412,7 +577,7 @@ tr.flag-ok td:first-child {
 .skill-group summary {
     cursor: pointer;
     font-weight: 800;
-    color: #0369a1;
+    color: var(--brand-text);
     padding: 8px 0;
     text-transform: uppercase;
     font-size: 12px;
@@ -428,21 +593,21 @@ tr.flag-ok td:first-child {
     display: grid;
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     gap: 14px;
-    border: 1px solid #e2e8f0;
-    border-radius: 7px;
-    background: #f8fafc;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    background: var(--surface-soft);
     padding: 12px;
 }
 
 .skill-label strong {
     display: block;
-    color: #0f172a;
+    color: var(--text);
     font-size: 14px;
     margin-bottom: 4px;
 }
 
 .rationale {
-    color: #64748b;
+    color: var(--text-mute);
     font-size: 12px;
     line-height: 1.5;
 }
@@ -451,7 +616,7 @@ tr.flag-ok td:first-child {
     display: grid;
     gap: 6px;
     font-size: 13px;
-    color: #475569;
+    color: var(--text-mid);
 }
 
 .rating-pill {
@@ -461,33 +626,33 @@ tr.flag-ok td:first-child {
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
-    background: #e2e8f0;
-    color: #0f172a;
+    background: var(--border-soft);
+    color: var(--text);
 }
 
 .rating-1 {
-    background: #fee2e2;
-    color: #991b1b;
+    background: var(--concern-bg);
+    color: var(--concern-text);
 }
 
 .rating-2 {
-    background: #fef3c7;
-    color: #854d0e;
+    background: var(--watch-bg);
+    color: var(--watch-text);
 }
 
 .rating-3 {
-    background: #cffafe;
-    color: #155e75;
+    background: var(--info-bg);
+    color: var(--info-text);
 }
 
 .rating-4 {
-    background: #dcfce7;
-    color: #166534;
+    background: var(--good-bg);
+    color: var(--good-text);
 }
 
 .rating-none {
-    background: #f1f5f9;
-    color: #64748b;
+    background: var(--surface-sunken);
+    color: var(--text-mute);
 }
 
 .findings {
@@ -498,26 +663,31 @@ tr.flag-ok td:first-child {
     gap: 8px;
     font-size: 13px;
     line-height: 1.55;
-    color: #475569;
+    color: var(--text-mid);
 }
 
 .findings li {
-    border: 1px solid #e2e8f0;
-    border-radius: 7px;
-    background: #f8fafc;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    background: var(--surface-soft);
     padding: 10px 12px;
+}
+
+.findings li strong {
+    color: var(--text);
 }
 
 .reaction-group {
     margin-top: 14px;
-    border: 1px solid #cbd5e1;
-    border-radius: 7px;
+    border: 1px solid var(--border-mid);
+    border-radius: 8px;
     padding: 10px 14px;
+    background: var(--surface-soft);
 }
 
 .reaction-group legend {
     font-weight: 800;
-    color: #334155;
+    color: var(--text-strong);
     font-size: 13px;
     padding: 0 6px;
 }
@@ -529,7 +699,17 @@ tr.flag-ok td:first-child {
     margin-right: 14px;
     margin-top: 6px;
     font-weight: 400;
-    color: #475569;
+    color: var(--text-mid);
+}
+
+a {
+    color: var(--brand-text);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 2px;
+}
+
+a:hover {
+    color: var(--brand-fill-hover);
 }
 
 @media (max-width: 820px) {
@@ -539,4 +719,3 @@ tr.flag-ok td:first-child {
         grid-template-columns: 1fr;
     }
 }
-

@@ -185,7 +185,14 @@ class GeminiDraftProvider(LocalDraftProvider):
     and judge dry-runs never depend on network access.
     """
 
-    tool_name = "draft.gemini_api_optional"
+    @property
+    def tool_name(self) -> str:
+        # Trace should reflect what actually fires, not which class wraps the call.
+        if os.getenv("OPENDRIVE_CLIPBOARD_ENABLE_GEMINI") != "true":
+            return "draft.local_template"
+        if not (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")):
+            return "draft.local_template"
+        return "draft.gemini_api_optional"
 
     def compose(
         self,

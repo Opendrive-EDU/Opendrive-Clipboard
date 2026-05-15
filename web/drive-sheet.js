@@ -132,13 +132,13 @@ function renderEcoGauge(eco) {
     const angle = (pct / 100) * 180 - 90;
     return `
         <svg viewBox="0 0 200 120" class="eco-svg" aria-label="Eco score">
-            <path d="M 10 110 A 90 90 0 0 1 190 110" fill="none" stroke="#e2e8f0" stroke-width="14"/>
-            <path d="M 10 110 A 90 90 0 0 1 190 110" fill="none" stroke="#0891b2" stroke-width="14"
+            <path d="M 10 110 A 90 90 0 0 1 190 110" fill="none" style="stroke: var(--border-soft);" stroke-width="14"/>
+            <path d="M 10 110 A 90 90 0 0 1 190 110" fill="none" style="stroke: var(--brand-fill);" stroke-width="14"
                   stroke-dasharray="${(pct / 100) * 282.7}, 282.7"/>
             <line x1="100" y1="110" x2="${100 + 70 * Math.cos((angle * Math.PI) / 180)}"
                   y2="${110 + 70 * Math.sin((angle * Math.PI) / 180)}"
-                  stroke="#0f172a" stroke-width="3"/>
-            <circle cx="100" cy="110" r="6" fill="#0f172a"/>
+                  style="stroke: var(--text);" stroke-width="3"/>
+            <circle cx="100" cy="110" r="6" style="fill: var(--text);"/>
         </svg>
         <div class="eco-readout">
             <strong>${value}</strong> / 100 - <em>${eco.band}</em>

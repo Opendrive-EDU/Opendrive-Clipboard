@@ -137,6 +137,10 @@ class ClipboardRequestHandler(BaseHTTPRequestHandler):
             content_type = "application/javascript; charset=utf-8"
         if file_path.suffix == ".css":
             content_type = "text/css; charset=utf-8"
+        if file_path.suffix == ".png":
+            content_type = "image/png"
+        if file_path.suffix == ".ico":
+            content_type = "image/x-icon"
 
         body = file_path.read_bytes()
         self.send_response(HTTPStatus.OK)
