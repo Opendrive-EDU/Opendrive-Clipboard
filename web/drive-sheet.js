@@ -4,7 +4,7 @@ const reportEl = document.querySelector('#report');
 const reportTitleEl = document.querySelector('#report-title');
 const sectionOneEl = document.querySelector('#section-one');
 const beaconStripEl = document.querySelector('#beacon-strip');
-const bloodPanelBody = document.querySelector('#blood-panel tbody');
+const driverHealthPanelBody = document.querySelector('#driver-health-panel tbody');
 const ecoGaugeEl = document.querySelector('#eco-gauge');
 const attitudeBarEl = document.querySelector('#attitude-bar');
 const skillGridEl = document.querySelector('#skill-grid');
@@ -64,7 +64,7 @@ function renderReport(report) {
 
     sectionOneEl.innerHTML = renderSectionOne(report);
     beaconStripEl.innerHTML = renderBeaconStrip(report.beacon_snapshot);
-    renderBloodPanel(report.blood_panel);
+    renderDriverHealthPanel(report.driver_health_panel);
     ecoGaugeEl.innerHTML = renderEcoGauge(report.eco_score);
     attitudeBarEl.innerHTML = renderAttitudeBar(report.attitude_profile);
     renderSkillGrid(report);
@@ -113,11 +113,11 @@ function renderBeaconStrip(snapshot) {
     `;
 }
 
-function renderBloodPanel(rows) {
-    bloodPanelBody.innerHTML = rows
+function renderDriverHealthPanel(rows) {
+    driverHealthPanelBody.innerHTML = rows
         .map((row) => `
             <tr class="flag-${row.flag}">
-                <td>${row.metric}</td>
+                <td>${row.label || row.metric}</td>
                 <td>${row.value} <span class="unit">${row.unit}</span></td>
                 <td>${row.ref_range}</td>
                 <td><span class="flag-badge flag-${row.flag}">${row.flag}</span></td>

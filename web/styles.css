@@ -449,21 +449,21 @@ button:focus-visible {
     line-height: 1.6;
 }
 
-.blood-panel {
+.driver-health-panel {
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
 }
 
-.blood-panel th,
-.blood-panel td {
+.driver-health-panel th,
+.driver-health-panel td {
     border-bottom: 1px solid var(--border-soft);
     padding: 8px 10px;
     text-align: left;
     color: var(--text-strong);
 }
 
-.blood-panel th {
+.driver-health-panel th {
     background: var(--surface-sunken);
     font-weight: 800;
     text-transform: uppercase;

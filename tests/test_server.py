@@ -48,7 +48,7 @@ class ClipboardServerTest(unittest.TestCase):
         )
         self.assertEqual(report["status"], "DRAFT_INSTRUCTOR_REVIEW_REQUIRED")
         self.assertFalse(report["has_audio"])
-        self.assertIn("blood_panel", report)
+        self.assertIn("driver_health_panel", report)
         self.assertIn("skill_ratings", report)
 
         fetched = self.get_json(f"/api/drive-reports/{report['id']}")

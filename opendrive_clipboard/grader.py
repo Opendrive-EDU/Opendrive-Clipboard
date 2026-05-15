@@ -5,12 +5,17 @@ What it does
 Given a scenario id, the grader:
 
 1. Pulls the synthetic Beacon recording (``opendrive_clipboard.beacon_demo``).
-2. Derives a blood-panel-style set of numeric metrics with reference ranges.
-3. Drafts a 1-4 rating per WA DOL form skill row (``dol_sheet.DOL_SKILLS``).
-   Skills with no telemetry signal are left ``None`` for the instructor.
-4. Produces an eco score and a calm / tentative / aggressive attitude profile.
-5. Pulls strengths and gaps from the rating sweep.
-6. Drafts a Section 3 comment paragraph + suggested reaction-to-coaching.
+2. Computes raw telemetry signals (smoothness, following distance, lane
+   variance, mirror cadence, lateral accel, intervention count).
+3. Aggregates the raw signals into a 5-category Driver Health Panel —
+   Safety, Smoothness, Attention, Control, Eco — each as a 0-100 score
+   with an ok / watch / concern flag.
+4. Drafts a 1-4 rating per WA DOL form skill row (``dol_sheet.DOL_SKILLS``)
+   using the raw signal index. Skills with no telemetry signal are left
+   ``None`` for the instructor.
+5. Produces an eco score and a calm / tentative / aggressive attitude profile.
+6. Pulls strengths and gaps from the rating sweep.
+7. Drafts a Section 3 comment paragraph + suggested reaction-to-coaching.
 
 What it does NOT do
 -------------------
@@ -19,8 +24,11 @@ What it does NOT do
   authority on the final form (``docs/BOUNDARY.md``).
 - It does not "train" anything in the ML sense. The numbers are
   deterministic, rule-based, reproducible. The optional Gemini hook only
-  ever varies prose - never the 1-4 ratings, never the blood-panel numbers.
+  ever varies prose - never the 1-4 ratings, never the panel numbers.
 - It does not read or produce audio. Beacon has no microphone.
+- The Driver Health Panel does not judge the student as a person. It shows
+  which driving habits are strong, which are improving, and which need
+  coaching.
 """
 
 from __future__ import annotations
@@ -52,12 +60,13 @@ def grade_drive(scenario_id: str) -> dict:
 
     scenario = scenarios[scenario_id]
     beacon = mock_beacon_recording(scenario_id)
-    panel = _blood_panel(beacon)
-    panel_index = {row["metric"]: row for row in panel}
+    signals = _compute_signals(beacon)
+    signals_index = {row["metric"]: row for row in signals}
 
-    skill_ratings = _rate_skills(scenario, panel_index)
-    eco_score = _eco_score(panel_index)
-    attitude = _attitude_profile(beacon, panel_index)
+    driver_health_panel = _driver_health_panel(signals_index)
+    skill_ratings = _rate_skills(scenario, signals_index)
+    eco_score = _eco_score(signals_index)
+    attitude = _attitude_profile(beacon, signals_index)
     strengths, gaps = _strengths_and_gaps(skill_ratings)
     section_three = _section_three_draft(scenario, gaps, attitude)
 
@@ -93,7 +102,13 @@ def grade_drive(scenario_id: str) -> dict:
         "rating_scale": RATING_SCALE,
         "skill_groups": skill_groups(),
         "skill_ratings": skill_ratings,
-        "blood_panel": panel,
+        "driver_health_panel": driver_health_panel,
+        "driver_health_panel_disclosure": (
+            "The Driver Health Panel works like a checkup for the drive. "
+            "It does not judge the student as a person. It shows which "
+            "driving habits are strong, which are improving, and which "
+            "need coaching."
+        ),
         "eco_score": eco_score,
         "attitude_profile": attitude,
         "strengths": strengths,
@@ -193,11 +208,14 @@ def _worst_flag(signals: list[str], panel: dict[str, dict]) -> str | None:
     return worst
 
 
-# --- blood panel -------------------------------------------------------------
+# --- raw telemetry signals ---------------------------------------------------
 
 
-def _blood_panel(beacon: dict) -> list[dict]:
-    """Clinical-style metrics with reference ranges + ok/watch/concern flag."""
+def _compute_signals(beacon: dict) -> list[dict]:
+    """Raw per-signal metric rows used internally for skill rating, eco score,
+    and the Driver Health Panel category aggregations. Not exposed in the
+    report — the user-visible surface is the Driver Health Panel.
+    """
 
     can = beacon["can"]
     imu = beacon["imu"]
@@ -281,6 +299,88 @@ def _oscillations(series: list[float]) -> int:
         if sign != 0:
             prev_sign = sign
     return flips
+
+
+# --- Driver Health Panel -----------------------------------------------------
+
+
+def _driver_health_panel(signals: dict[str, dict]) -> list[dict]:
+    """Aggregate raw signals into five driver-competency categories — each a
+    0-100 score with an ok / watch / concern flag.
+
+    This is the user-visible panel that replaces the older blood-panel
+    framing. The categories were chosen so the panel describes the *drive*,
+    never the student as a person.
+    """
+
+    def clip(value: float, lo: float, hi: float) -> float:
+        return max(lo, min(hi, value))
+
+    def flag_for(score: float) -> str:
+        if score >= 70:
+            return "ok"
+        if score >= 55:
+            return "watch"
+        return "concern"
+
+    following = signals["mean_following_distance_s"]["value"]
+    interventions = signals["intervention_count"]["value"]
+    peak_lat = signals["peak_lateral_accel_g"]["value"]
+    brake_smooth = signals["smooth_braking_score"]["value"]
+    throttle_smooth = signals["throttle_smoothness"]["value"]
+    cadence = signals["mirror_cadence_per_min"]["value"]
+    lane_var = signals["lane_position_variance"]["value"]
+
+    # Safety — keeping the drive safe (following distance, low interventions, controlled cornering)
+    safety = (
+        clip((following / 4.0) * 100.0, 0.0, 100.0) * 0.40
+        + clip((1.0 - min(interventions, 5) / 5.0) * 100.0, 0.0, 100.0) * 0.40
+        + clip((1.0 - min(peak_lat, 0.5) / 0.5) * 100.0, 0.0, 100.0) * 0.20
+    )
+
+    # Smoothness — pedal control (mean of brake + throttle smoothness)
+    smoothness = (brake_smooth + throttle_smooth) / 2.0
+
+    # Attention — situational awareness (mirror cadence + lane discipline)
+    attention = (
+        clip((min(cadence, 6.0) / 6.0) * 100.0, 0.0, 100.0) * 0.60
+        + clip((1.0 - min(lane_var, 0.5) / 0.5) * 100.0, 0.0, 100.0) * 0.40
+    )
+
+    # Control — physical vehicle handling (lane variance, lateral g, consistent braking)
+    control = (
+        clip((1.0 - min(lane_var, 0.5) / 0.5) * 100.0, 0.0, 100.0) * 0.40
+        + clip((1.0 - min(peak_lat, 0.5) / 0.5) * 100.0, 0.0, 100.0) * 0.30
+        + brake_smooth * 0.30
+    )
+
+    # Eco — fuel-responsible inputs (mirrors _eco_score's blend)
+    eco = throttle_smooth * 0.55 + brake_smooth * 0.45
+
+    def row(key: str, label: str, value: float, signals_used: list[str]) -> dict:
+        rounded = round(value, 1)
+        return {
+            "metric": key,
+            "label": label,
+            "value": rounded,
+            "unit": "/ 100",
+            "ref_range": ">= 70",
+            "flag": flag_for(rounded),
+            "signals": signals_used,
+        }
+
+    return [
+        row("safety", "Safety", safety,
+            ["mean_following_distance_s", "intervention_count", "peak_lateral_accel_g"]),
+        row("smoothness", "Smoothness", smoothness,
+            ["smooth_braking_score", "throttle_smoothness"]),
+        row("attention", "Attention", attention,
+            ["mirror_cadence_per_min", "lane_position_variance"]),
+        row("control", "Control", control,
+            ["lane_position_variance", "peak_lateral_accel_g", "smooth_braking_score"]),
+        row("eco", "Eco", eco,
+            ["throttle_smoothness", "smooth_braking_score"]),
+    ]
 
 
 # --- eco + attitude ----------------------------------------------------------

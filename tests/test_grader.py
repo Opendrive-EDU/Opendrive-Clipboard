@@ -82,14 +82,28 @@ class GraderTest(unittest.TestCase):
             self.assertIn("rationale", row)
             self.assertIn("instructor_override", row)
 
-    def test_blood_panel_rows_have_ref_ranges(self):
+    def test_driver_health_panel_has_five_categories(self):
         report = grade_drive("residential-following-distance")
-        metrics = {row["metric"] for row in report["blood_panel"]}
-        self.assertIn("smooth_braking_score", metrics)
-        self.assertIn("mean_following_distance_s", metrics)
-        for row in report["blood_panel"]:
+        panel = report["driver_health_panel"]
+        metrics = {row["metric"] for row in panel}
+        self.assertEqual(
+            metrics,
+            {"safety", "smoothness", "attention", "control", "eco"},
+        )
+        for row in panel:
             self.assertIn(row["flag"], {"ok", "watch", "concern"})
             self.assertTrue(row["ref_range"])
+            self.assertIn("label", row)
+            self.assertGreaterEqual(row["value"], 0)
+            self.assertLessEqual(row["value"], 100)
+            self.assertIsInstance(row["signals"], list)
+            self.assertGreater(len(row["signals"]), 0)
+
+    def test_driver_health_panel_disclosure_present(self):
+        report = grade_drive("residential-following-distance")
+        disclosure = report["driver_health_panel_disclosure"]
+        self.assertIn("checkup", disclosure.lower())
+        self.assertIn("does not judge", disclosure.lower())
 
     def test_eco_score_in_range(self):
         report = grade_drive("residential-following-distance")

@@ -21,7 +21,7 @@ class ClipboardWorkflowTest(unittest.TestCase):
         self.assertGreaterEqual(len(run["trace"]), 6)
         self.assertEqual(run["drive_report"]["status"], "DRAFT_INSTRUCTOR_REVIEW_REQUIRED")
         self.assertFalse(run["drive_report"]["has_audio"])
-        self.assertIn("blood_panel", run["drive_report"])
+        self.assertIn("driver_health_panel", run["drive_report"])
         self.assertIn("skill_ratings", run["drive_report"])
 
     def test_review_decision_updates_demo_only_state(self):

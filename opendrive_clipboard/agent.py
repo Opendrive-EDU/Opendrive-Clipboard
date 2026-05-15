@@ -265,7 +265,7 @@ class DriveSheetGraderAgent:
                 "Drive Sheet Grader Agent",
                 "drive_sheet.draft_drive_report",
                 "draft",
-                "Drafted WA DOL DTS-661-047 ratings + blood panel + report. "
+                "Drafted WA DOL DTS-661-047 ratings + Driver Health Panel + report. "
                 "Awaiting licensed instructor review.",
             )
         ]
