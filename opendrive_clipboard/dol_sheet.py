@@ -10,8 +10,11 @@ a 1-4 rating per skill row, and the licensed instructor reviews the draft
 before any record becomes official. Nothing in this module short-circuits
 the human review gate documented in ``docs/BOUNDARY.md``.
 
-Synthetic-only: there is no real student data here. There is no audio,
-no microphone, no cabin recording anywhere in OpenDrive.
+Synthetic-only: there is no real student data here. The synthetic dataset
+contains no audio. The production system includes an opt-in boundary mic
+(hardware kill switch + UI toggle + ephemeral STT) used only for the DOL
+"practice commentary driving" exercise — not present in this synthetic
+dataset, and never used for any other purpose.
 """
 
 from __future__ import annotations

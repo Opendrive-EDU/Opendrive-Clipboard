@@ -25,7 +25,11 @@ What it does NOT do
 - It does not "train" anything in the ML sense. The numbers are
   deterministic, rule-based, reproducible. The optional Gemini hook only
   ever varies prose - never the 1-4 ratings, never the panel numbers.
-- It does not read or produce audio. Beacon has no microphone.
+- It does not read or produce audio in this synthetic grader path. The
+  production boundary mic is opt-in (hardware kill switch + UI toggle +
+  ephemeral STT) for DOL commentary-driving exercises, and writes only
+  transcript text — never audio — when active. The grader consumes
+  transcripts, never raw audio.
 - The Driver Health Panel does not judge the student as a person. It shows
   which driving habits are strong, which are improving, and which need
   coaching.
@@ -77,7 +81,9 @@ def grade_drive(scenario_id: str) -> dict:
         "synthetic_only": True,
         "has_audio": False,
         "no_microphone_disclosure": (
-            "OpenDrive Beacon has no microphone. This report contains no audio."
+            "This synthetic report contains no audio. The production boundary mic is opt-in "
+            "(hardware kill switch + UI toggle) for DOL commentary-driving exercises; "
+            "transcript-only retention by default."
         ),
         "scenario": {
             "id": scenario["id"],

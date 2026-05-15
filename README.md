@@ -48,7 +48,7 @@ The agent is sold to driving schools, not to teen drivers, families, or car manu
 
 | Product | Role | Repository |
 |---|---|---|
-| **OpenDrive Beacon** | In-vehicle sensor stack (CAN, IMU, GPS, forward camera) — passive recorder, no microphone | private mono-repo |
+| **OpenDrive Beacon** | In-vehicle sensor stack (CAN, IMU, GPS, forward camera) + opt-in boundary mic (hardware kill switch + UI toggle + ephemeral STT) used only for DOL commentary-driving exercises | private mono-repo |
 | **OpenDrive Clipboard** *(this repo)* | Post-drive debrief drafting and review agent (Gemini ADK + MCP-style tools + instructor review-gate UI) | this repo |
 
 OpenDrive is the company / umbrella brand sitting above both products.
@@ -117,7 +117,7 @@ See `docs/DEVPOST_SUBMISSION.md` for the submission copy, `docs/SUBMISSION_PLAN.
 These are non-negotiable and will not change:
 
 1. **The licensed human instructor is the sole authority.** Clipboard never instructs the student.
-2. **No microphone.** The vehicle cabin is never recorded.
+2. **No covert microphone.** A single opt-in boundary mic (Audio-Technica ATR4697-USB) is used only for the DOL "practice commentary driving" exercise. Three controls govern it: a hardware USB kill switch, a UI toggle, and an always-visible mic state badge. Audio is processed ephemerally — STT runs, audio is discarded immediately, transcript-only retained. Default mode is `stt_ephemeral_only`; `raw_audio_retained` requires explicit consent with a reason code.
 3. **`DRAFT — INSTRUCTOR REVIEW REQUIRED`** appears on every agent output. Approval is required before any delivery.
 4. **Demo data only in this repo.** No live student records, no PII, no production OpenDrive Beacon secrets.
 5. **The agent assists the instructor, never the student.** Clipboard is a post-drive drafting aid, not an automated instructor, automated evaluator, or student tutor.

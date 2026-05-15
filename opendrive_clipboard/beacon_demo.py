@@ -10,9 +10,11 @@ Strict properties:
 
 - Output is deterministic per ``scenario_id`` (seeded ``random.Random``).
   Two calls produce identical bytes so judges can reproduce the demo.
-- ``meta["has_audio"]`` is always ``False``. **There is no microphone
-  anywhere in OpenDrive Beacon.** This module never returns an ``audio``,
-  ``cabin``, or ``microphone`` field.
+- ``meta["has_audio"]`` is ``False`` for this synthetic recording. The
+  production boundary mic (Audio-Technica ATR4697-USB, opt-in, hardware
+  kill switch + UI toggle) is used only for DOL commentary-driving
+  exercises and is not present in synthetic data. This module never
+  returns an ``audio``, ``cabin``, or raw-audio field.
 - ``forward_camera`` carries text labels only - no image bytes, no URLs.
 - GPS coordinates are local offsets around (0, 0); they are not real
   Washington locations and cannot be reverse-geocoded.
@@ -63,9 +65,11 @@ def mock_beacon_recording(scenario_id: str) -> dict:
             "sample_hz": SAMPLE_HZ,
             "synthetic": True,
             "has_audio": False,
-            "no_microphone_disclosure": (
-                "OpenDrive Beacon never records, transmits, or processes audio "
-                "of any kind from inside the vehicle."
+            "mic_disclosure": (
+                "This synthetic recording contains no audio. The production "
+                "boundary mic is opt-in (hardware kill switch + UI toggle + "
+                "ephemeral STT) for DOL commentary-driving exercises; "
+                "transcript-only retention by default."
             ),
             "data_source": "mock_beacon_demo_generator_v1",
         },
@@ -204,7 +208,12 @@ def _build_forward_camera_labels(scenario: dict) -> list[dict]:
 
 
 def _build_intervention_taps(scenario: dict) -> list[dict]:
-    """Instructor on-screen taps anchored on scenario event times (no audio)."""
+    """Instructor on-screen taps anchored on scenario event times.
+
+    The tap event is the instructor's verbal-intervention marker — it carries a
+    timestamp only, never audio. It is independent of the boundary mic used for
+    DOL commentary-driving exercises.
+    """
 
     return [
         {

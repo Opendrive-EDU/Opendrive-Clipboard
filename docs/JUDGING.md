@@ -38,11 +38,12 @@ If the API key is missing or the network call fails, the demo falls back to the 
 
 ## Non-Negotiable Boundaries
 
-- No live student records.
-- No real OpenDrive Beacon telemetry.
-- No service-account JSON files.
-- No official LMS, DOL, certificate, or transcript writes.
-- No in-vehicle audio capture or vehicle control.
+- No live student records (synthetic demo data only in the public repo).
+- No real OpenDrive Beacon telemetry in the public repo (synthetic recordings only).
+- No service-account JSON files in the repo.
+- No official LMS, DOL, certificate, or transcript writes from the demo.
+- **No vehicle control** — Clipboard never touches brakes, throttle, steering, or any vehicle subsystem.
+- **No covert audio capture** — the boundary mic captures only when both a physical hardware kill switch and a UI toggle are flipped on, with the mic state badge always visible to the student. Default mode is `stt_ephemeral_only` (audio discarded immediately after transcription); raw-audio retention requires explicit consent + reason code.
 
 ## Demo Video Beat
 

@@ -2,7 +2,9 @@
 
 **For:** Devpost judges, partner driving schools, families, public reviewers, WA DOL
 **Author:** Mr. Law (Jason Law), licensed WA BTW instructor, Street Law OpenDrive
-**Last updated:** 2026-05-01
+**Last updated:** 2026-05-14
+
+> **Update note (2026-05-14):** A prior version of this document committed to "no microphone anywhere in OpenDrive." That commitment is rescinded. The WA DOL DTS-661-047 form has **"Practice commentary driving"** as one of the 50 scored skills, and scoring that skill requires capturing the student's spoken commentary. The replacement posture is: **opt-in microphone, hardware kill switch (physical USB on/off cable), UI toggle, ephemeral speech-to-text, transcript-only retention by default.** The hardware kill switch is load-bearing — student or instructor can physically cut mic power without touching software. This is a stronger trust posture than the prior blanket ban, not a weaker one. Details below.
 
 This document is the regulatory boundary statement for **OpenDrive Clipboard** (the Devpost AI Agents Challenge submission product) and its relationship to **OpenDrive Beacon** (the in-vehicle sensor stack maintained in the private OpenDriveEDU mono-repo). It mirrors the public-facing `BEACON-IS-AND-IS-NOT.md` shipped at `streetlawopendrive.com/docs/beacon-is-and-is-not.md`.
 
@@ -29,7 +31,14 @@ OpenDrive Clipboard is a **post-drive debrief drafting agent** that produces dra
 - **Not a vehicle-control or driver-assist system.** It does not touch brakes, throttle, steering, signals, or any vehicle subsystem.
 - **Not a licensing or grading authority.** It does not issue, recommend, or influence pass/fail decisions. WA DOL standards apply; the licensed instructor evaluates.
 - **Not a student-facing surveillance tool.** Outputs are reviewed and approved by the licensed instructor of record, governed by school policy and parental consent.
-- **Not a microphone.** Clipboard does not capture cabin audio. OpenDrive Beacon (the upstream sensor stack) also does not capture cabin audio. **There is no microphone anywhere in the OpenDrive system.** Verbal interventions by the instructor are logged via an on-screen kiosk tap.
+- **Not a covert microphone.** OpenDrive Beacon includes a **single opt-in boundary microphone** (Audio-Technica ATR4697-USB) used ONLY for capturing student commentary during the WA DOL "practice commentary driving" exercise. Three controls govern it:
+  1. **Hardware kill switch** on the USB cable (Cable Matters 5 Gbps USB 3.0 with physical on/off toggle). Student or instructor can physically cut power. When off, the mic cannot capture anything, period.
+  2. **UI toggle** in the demo and in the instructor dashboard. Software-layer on/off in addition to the hardware switch.
+  3. **Mic state badge always visible** to the student. Four states: `HARD_OFF` (hardware cut), `MUTED` (hardware on, UI off), `ACTIVE` (capturing), `UNKNOWN` (pre-poll).
+
+  Default audio mode is `stt_ephemeral_only` — audio is captured, speech-to-text runs, audio is discarded immediately. Only the transcript text is retained. Retaining raw audio requires explicit consent with a reason code and an audit-log entry. The default is never `raw_audio_retained`.
+
+  Verbal **instructor interventions** are logged via an on-screen kiosk tap event (unchanged from the prior design) — that's distinct from commentary-driving mic capture.
 
 ---
 
@@ -52,7 +61,7 @@ If, in the future, real OpenDrive Beacon recordings flow into Clipboard, they do
 
 1. With the licensed instructor reviewing every draft before delivery, and
 2. Within Street Law OpenDrive's regulatory posture (RCW 46.82 + WAC 308-108), and
-3. Without ever including cabin audio (because OpenDrive Beacon has no microphone).
+3. With cabin audio captured ONLY when the hardware kill switch is on AND the UI toggle is enabled AND the session is mid commentary-driving exercise. Audio is processed ephemerally — STT runs, audio is discarded, transcript-only retained.
 
 ---
 
@@ -66,7 +75,8 @@ OpenDrive Beacon is the upstream system. None of these sensors live in this repo
 | **IMU (Phidget MOT0110_0)** | Records accelerometer + gyro for hard-brake / hard-turn timestamps. | Does not influence vehicle motion. Does not produce in-vehicle output. |
 | **GPS (USB receiver)** | Records vehicle location, speed, and route for post-drive map review. | Does not share location externally during the drive. Not used for tracking outside the lesson. |
 | **Forward camera (OAK-D Lite)** | Records the road scene for post-drive review and offline ML labeling. | Does not warn the driver. Does not display anything to the student. Not a driver-assist system. |
-| **Instructor intervention tap** (kiosk on-screen button; future Bluetooth clicker) | Records the timestamp when the licensed instructor taps to flag a verbal intervention for post-drive review. | **Does not capture audio. OpenDrive Beacon never records, transmits, or processes audio of any kind from inside the vehicle.** |
+| **Instructor intervention tap** (kiosk on-screen button; future Bluetooth clicker) | Records the timestamp when the licensed instructor taps to flag a verbal intervention for post-drive review. | Does not itself capture audio. The intervention tap and the boundary mic are independent — tapping always works regardless of mic state. |
+| **Boundary mic** (Audio-Technica ATR4697-USB, omnidirectional condenser, USB) | Captures cabin audio ONLY when (a) the hardware USB kill switch is on AND (b) the UI toggle is enabled AND (c) the session is mid commentary-driving exercise. STT runs ephemerally; raw audio discarded immediately. Transcript-only retained. Used for DOL "practice commentary driving" skill scoring. | Does not capture covertly. Mic state badge always visible to the student. Default mode is `stt_ephemeral_only` — `raw_audio_retained` mode requires explicit consent log entry with reason code. |
 
 ---
 

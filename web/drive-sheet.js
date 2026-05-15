@@ -105,7 +105,7 @@ function renderBeaconStrip(snapshot) {
         <div class="strip-row"><strong>CAN samples</strong> ${snapshot.can_sample_count}</div>
         <div class="strip-row"><strong>IMU samples</strong> ${snapshot.imu_sample_count}</div>
         <div class="strip-row"><strong>GPS samples</strong> ${snapshot.gps_sample_count}</div>
-        <div class="strip-row"><strong>Audio captured</strong> ${snapshot.meta.has_audio ? 'YES (this should never appear)' : 'NO - by design'}</div>
+        <div class="strip-row"><strong>Mic state</strong> ${snapshot.meta.has_audio ? 'ACTIVE — opt-in commentary capture' : 'HARD_OFF / MUTED — no audio captured this session'}</div>
         <h3 class="strip-subtitle">Intervention taps</h3>
         <ul class="strip-list">${taps || '<li>None</li>'}</ul>
         <h3 class="strip-subtitle">Forward-camera frame labels (text only)</h3>
