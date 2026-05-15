@@ -136,6 +136,15 @@ class DemoStore:
 
         return deepcopy(report)
 
+    def get_draft(self, draft_id: str) -> dict:
+        return self._draft(draft_id)
+
+    def mark_drive_report_audio(self, report_id: str) -> None:
+        try:
+            self.drive_reports[report_id]["has_audio"] = True
+        except KeyError as exc:
+            raise ValueError(f"Unknown drive report: {report_id}") from exc
+
     def _draft(self, draft_id: str) -> dict:
         try:
             return deepcopy(self.drafts[draft_id])

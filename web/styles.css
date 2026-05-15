@@ -386,6 +386,42 @@ button:focus-visible {
     display: none;
 }
 
+.audio-controls {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-soft);
+    display: grid;
+    gap: 10px;
+}
+
+.audio-controls #listen-btn {
+    justify-self: start;
+    background: var(--brand-fill);
+    color: #ffffff;
+    border: 1.5px solid var(--brand-fill);
+}
+
+.audio-controls #listen-btn:hover {
+    background: var(--brand-fill-hover);
+    border-color: var(--brand-fill-hover);
+}
+
+.audio-controls #listen-btn:disabled {
+    opacity: 0.6;
+    cursor: progress;
+}
+
+.youth-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.audio-controls audio {
+    width: 100%;
+}
+
 .report-shell {
     display: grid;
     gap: 18px;

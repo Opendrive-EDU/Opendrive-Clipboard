@@ -12,6 +12,7 @@ from urllib.parse import urlparse
 from opendrive_clipboard.agent import ClipboardRunner
 from opendrive_clipboard.store import DemoStore
 from opendrive_clipboard.tools import DriveSheetTools, InstructorReviewTools
+from opendrive_clipboard.tts import synthesize
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -55,6 +56,58 @@ class ClipboardApp:
 
         return self.drive_sheet_tools.record_drive_report_decision(report_id, decision)
 
+    def text_to_speech(self, payload: dict) -> dict:
+        """Read back an instructor-APPROVED debrief as audio.
+
+        The text is taken from the stored, approved artifact - never from the
+        client - so audio can only ever voice what a licensed instructor signed
+        off on. Youth Mode is reachable only through this same approval gate.
+        """
+        mode = payload.get("mode") or "professional"
+        if mode not in {"professional", "youth"}:
+            raise ValueError(f"Unsupported voice mode: {mode}")
+
+        report_id = payload.get("report_id")
+        draft_id = payload.get("draft_id")
+
+        if report_id:
+            item = self.store.get_drive_report(report_id)
+            _require_instructor_approval(item)
+            text = item.get("section_three_draft", {}).get("comments_draft", "")
+        elif draft_id:
+            item = self.store.get_draft(draft_id)
+            _require_instructor_approval(item)
+            text = _draft_speech_text(item)
+        else:
+            raise ValueError("Provide report_id or draft_id.")
+
+        result = synthesize(text, mode)
+
+        if result.get("enabled") and report_id:
+            self.store.mark_drive_report_audio(report_id)
+
+        return result
+
+
+def _require_instructor_approval(item: dict) -> None:
+    if item.get("review_decision") != "approve":
+        raise ValueError(
+            "Audio is available only after a licensed instructor approves the draft."
+        )
+
+
+def _draft_speech_text(draft: dict) -> str:
+    parts = [
+        draft.get("headline", ""),
+        draft.get("safety_summary", ""),
+        draft.get("observed_concern", ""),
+        draft.get("lesson_focus", ""),
+        draft.get("reflection_prompt", ""),
+        draft.get("practice_assignment", ""),
+        draft.get("family_summary", ""),
+    ]
+    return " ".join(part for part in parts if part)
+
 
 class ClipboardRequestHandler(BaseHTTPRequestHandler):
     app: ClipboardApp = ClipboardApp()
@@ -96,6 +149,11 @@ class ClipboardRequestHandler(BaseHTTPRequestHandler):
                 lambda: self.app.create_drive_report(payload),
                 status=HTTPStatus.CREATED,
             )
+            return
+
+        if path == "/api/tts":
+            payload = self.read_json()
+            self.safe_json(lambda: self.app.text_to_speech(payload))
             return
 
         self.send_error(HTTPStatus.NOT_FOUND, "Unknown endpoint")
