@@ -22,6 +22,13 @@ const audioNoteEl = document.querySelector('#audio-note');
 
 let activeReportId = null;
 
+function b64ToBlob(b64, mime) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i += 1) bytes[i] = bin.charCodeAt(i);
+    return new Blob([bytes], { type: mime || 'audio/mpeg' });
+}
+
 async function loadScenarios() {
     const response = await fetch('/api/scenarios');
     const payload = await response.json();
@@ -86,12 +93,21 @@ async function speakDebrief() {
             audioNoteEl.textContent = 'Audio not configured (Speechify TTS is disabled for this demo).';
             return;
         }
-        debriefAudioEl.src = `data:${payload.mime};base64,${payload.audio_b64}`;
-        await debriefAudioEl.play();
+        if (debriefAudioEl.dataset.url) URL.revokeObjectURL(debriefAudioEl.dataset.url);
+        const url = URL.createObjectURL(b64ToBlob(payload.audio_b64, payload.mime));
+        debriefAudioEl.dataset.url = url;
+        debriefAudioEl.src = url;
+        debriefAudioEl.controls = true;
+        debriefAudioEl.hidden = false;
         const voiceMsg = payload.voice_fell_back
             ? `Youth voice unavailable on this plan - used the professional voice (${payload.voice}).`
             : `Voice: ${payload.voice} (${payload.mode}).`;
-        audioNoteEl.textContent = `${voiceMsg} Reads back only the instructor-approved comment.`;
+        try {
+            await debriefAudioEl.play();
+            audioNoteEl.textContent = `${voiceMsg} Reads back only the instructor-approved comment.`;
+        } catch (err) {
+            audioNoteEl.textContent = `${voiceMsg} Press the ▶ on the player below to listen.`;
+        }
     } finally {
         listenBtn.disabled = false;
         listenBtn.textContent = '▶ Listen to approved comment';
