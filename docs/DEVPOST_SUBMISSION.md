@@ -22,7 +22,7 @@ AI organizes the moment. The instructor leads the lesson.
 
 OpenDrive Clipboard is a Gemini-powered, ADK-ready agent workflow that drafts post-drive debrief materials for a licensed instructor to review and approve.
 
-It runs after the lesson, not during the drive. It does not exist in the vehicle cabin. It does not capture interior audio. It does not control the vehicle, grade readiness, make licensing decisions, or communicate with the student during a drive.
+It runs after the lesson, not during the drive. It does not control the vehicle, grade readiness, make licensing decisions, or communicate with the student during a drive. Audio is captured only for the WA DOL "practice commentary driving" exercise, through an opt-in boundary microphone governed by a hardware kill switch + UI toggle + an always-visible state badge; speech-to-text runs ephemerally and only the transcript text is retained (raw audio is discarded). The public demo in this repo uses synthetic data and captures no audio at all.
 
 The agent takes a demo driving scenario, such as late braking near a crosswalk, residential speed creep, following too closely, missed signaling, or yellow-light indecision, and produces an instructor-ready draft containing:
 
@@ -47,7 +47,9 @@ Architecture:
 - Instructor review-gate dashboard
 - Google Cloud Run deployment target for the dashboard and agent services
 
-The public demo uses demo data only: no real student records, no PII, no production OpenDrive Beacon data, no interior audio, and no production secrets in the public repo.
+The public demo uses demo data only: no real student records, no PII, no production OpenDrive Beacon data, no audio capture in the demo, and no production secrets in the public repo.
+
+**Production stack already exists.** This is not a paper architecture. The OpenDrive Beacon edge stack — Jetson Orin Nano Super, read-only Red Panda CAN reader (SAFETY_SILENT hardware-enforced), IMU, GPS, OAK-D Lite forward camera, and a deployed ContextScorer v0.1.0 ML model (TensorRT FP16, ~0.6 ms inference, 8 context labels) — is bench-verified with ~50 miles of real data logged. The public Clipboard agent in this repo runs synthetic data shaped to match the real ContextScorer output format. The production stack is private (hardware bring-up details, ML training assets, integration secrets), but a curated, sanitized, judge-invite-only companion repository is available for verification. Judges may request read access by emailing `mrlaw@streetlawopendrive.com` with their GitHub username and Devpost-judge identifier; access is revoked after judging closes (2026-06-22). See `docs/FULL_BEACON_ARCHITECTURE.md`.
 
 Two products, one umbrella:
 

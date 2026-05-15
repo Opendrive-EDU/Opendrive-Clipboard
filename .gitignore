@@ -68,3 +68,7 @@ Thumbs.db
 scratch/
 tmp/
 *.log
+
+# Imported Beacon handoff archive
+beaconfiles.zip
+beaconfiles/

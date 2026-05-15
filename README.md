@@ -6,6 +6,8 @@ OpenDrive Clipboard is the **Devpost submission product** for the [Google for St
 
 **Tagline:** *Beacon records. Clipboard drafts. The licensed instructor decides.*
 
+> **This repo is the public-facing slice of a larger production system.** OpenDrive Clipboard is the post-drive review surface. Behind it is the full OpenDrive Beacon stack — a Jetson edge node reading the vehicle CAN bus (read-only), IMU, GPS, a forward camera, and a deployed ML context model (ContextScorer v0.1.0), all bench-verified with ~50 miles of real data. That production stack is intentionally **not** published here (it contains hardware bring-up details, ML training assets, and integration secrets that do not belong in a public repo). See [`docs/FULL_BEACON_ARCHITECTURE.md`](docs/FULL_BEACON_ARCHITECTURE.md) for the system design, and the **Verification access** section there for how Devpost judges can request read access to a sanitized private companion repo.
+
 ## Problem to solve
 
 Behind-the-wheel lessons should be learning experiences, not pass/fail moments or overwhelming correction lists.

@@ -8,6 +8,8 @@
 
 This document is the regulatory boundary statement for **OpenDrive Clipboard** (the Devpost AI Agents Challenge submission product) and its relationship to **OpenDrive Beacon** (the in-vehicle sensor stack maintained in the private OpenDriveEDU mono-repo). It mirrors the public-facing `BEACON-IS-AND-IS-NOT.md` shipped at `streetlawopendrive.com/docs/beacon-is-and-is-not.md`.
 
+> For the full production system design (Jetson edge stack, ContextScorer ML model, sensor-fusion roadmap) and how judges can request verification access to a sanitized private companion repo, see [`docs/FULL_BEACON_ARCHITECTURE.md`](FULL_BEACON_ARCHITECTURE.md). This BOUNDARY statement governs the public Clipboard demo specifically; FULL_BEACON_ARCHITECTURE.md describes the broader Beacon system that sits behind it.
+
 ---
 
 ## One sentence
