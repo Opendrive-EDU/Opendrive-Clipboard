@@ -8,6 +8,8 @@ WORKDIR /app
 
 COPY . /app
 
+RUN pip install --no-cache-dir .
+
 RUN python -m unittest discover -s tests
 
 EXPOSE 8080

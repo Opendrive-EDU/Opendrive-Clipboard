@@ -51,6 +51,13 @@ OpenDrive Clipboard is a **post-drive debrief drafting agent** that produces dra
 - Every Clipboard output is marked **`DRAFT — INSTRUCTOR REVIEW REQUIRED`** and cannot reach a student or family until the instructor approves it.
 - The Devpost demo enforces this with a hard human-review gate: the agent loop **stops** at draft submission and does not advance until the instructor clicks Approve, Edit, Reject, or Regenerate.
 
+### Read-aloud (Speechify TTS) posture
+
+- Text-to-speech is an **optional accessibility add-on**, OFF by default (`SPEECHIFY_ENABLE_TTS`). The public demo ships with zero secrets and no audio.
+- Audio can only ever read back text the licensed instructor has **already approved** — the `/api/tts` endpoint pulls the comment from the stored, approved artifact, never from the client. There is no path to voice an unreviewed draft.
+- The judge-facing default is a **professional voice**. "Youth Mode" (an energetic / celebrity voice such as Snoop Dogg) is opt-in, instructor-gated, and intended only for the learner's own approved copy — never the judge demo default.
+- A celebrity voice is used **only** if it is licensed for redistribution on the configured Speechify plan; any voice/SDK/network error automatically falls back to the professional voice and is flagged. Speechify never authors or alters a debrief — it only reads approved text.
+
 ---
 
 ## Relationship to OpenDrive Beacon

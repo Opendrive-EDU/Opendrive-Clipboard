@@ -104,6 +104,7 @@ OpenDrive Clipboard's productization target is the **Google Cloud AI Agent Marke
 - Public demo live on Cloud Run (`opendrive-clipboard-demo`, project `opendrive-clipboard`, region `us-central1`, `allUsers` → `roles/run.invoker`).
 - Branded apex `opendriveclipboard.com` purchased; TXT verification + Cloud Run domain mapping + A/AAAA records in flight at Network Solutions.
 - Architecture intentionally ADK-ready — specialized agents and typed MCP-style tools structured to wrap cleanly in `google.adk.agents.Agent` later — but with no hard dependency on `google-adk` so judges can run the demo without external network calls.
+- Optional Speechify read-aloud add-on (`/api/tts`): OFF by default so the public demo runs with zero secrets and no network. When enabled, it voices **only the instructor-approved** comment in a professional voice; "Youth Mode" (celebrity voice) is opt-in, instructor-gated, and never the judge default, with an automatic professional-voice fallback if the voice is not licensed. See `docs/BOUNDARY.md` → "Read-aloud (Speechify TTS) posture".
 
 ### Phase B — Standalone-ready ADK conversion (2026-06-06 → 2026-08-31)
 

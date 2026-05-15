@@ -7,9 +7,23 @@ license = { text = "Apache-2.0" }
 authors = [
     { name = "Street Law OpenDrive", email = "mrlaw@streetlawopendrive.com" }
 ]
+# Runtime stays stdlib-only except the OPTIONAL Speechify TTS provider, which is
+# never imported unless SPEECHIFY_ENABLE_TTS=true (see opendrive_clipboard/tts.py).
+dependencies = [
+    "speechify-api>=1.0",
+]
 
 [project.scripts]
 opendrive-clipboard-demo = "opendrive_clipboard.server:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# The repo root holds non-package dirs (web/, beaconfiles/). Pin the package so
+# setuptools flat-layout discovery does not fail the wheel build.
+[tool.setuptools]
+packages = ["opendrive_clipboard"]
 
 [tool.unittest]
 start-directory = "tests"
