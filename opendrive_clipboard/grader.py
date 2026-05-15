@@ -102,7 +102,11 @@ def grade_drive(scenario_id: str) -> dict:
                 "drive_date": "synthetic-demo",
                 "start_time": "synthetic-demo",
                 "end_time": "synthetic-demo",
-                "total_time_min": beacon["meta"]["duration_s"] // 60 or 1,
+                "total_time_min": (
+                    beacon["meta"].get("lesson_minutes")
+                    or beacon["meta"]["duration_s"] // 60
+                    or 1
+                ),
             },
         },
         "rating_scale": RATING_SCALE,

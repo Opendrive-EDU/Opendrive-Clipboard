@@ -29,7 +29,7 @@ class ClipboardApp:
         return self.store.list_scenarios()
 
     def create_run(self, payload: dict) -> dict:
-        scenario_id = payload.get("scenario_id") or "residential-following-distance"
+        scenario_id = payload.get("scenario_id") or "drive-1"
         instructor_notes = payload.get("instructor_notes") or ""
 
         return self.runner.run(scenario_id, instructor_notes)
@@ -43,7 +43,7 @@ class ClipboardApp:
         return self.review_tools.record_instructor_decision(draft_id, decision)
 
     def create_drive_report(self, payload: dict) -> dict:
-        scenario_id = payload.get("scenario_id") or "residential-following-distance"
+        scenario_id = payload.get("scenario_id") or "drive-1"
 
         return self.drive_sheet_tools.draft_drive_report(scenario_id)
 
