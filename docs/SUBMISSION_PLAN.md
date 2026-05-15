@@ -8,6 +8,20 @@ This challenge is the formal home for the **OpenDrive Clipboard** — the rebran
 
 This file previously held the DOL framing scrub plan. That work is now tracked entirely through `TaskList` (tasks #36–#39) and the shipped working tree; this plan is a fresh, different task and overwrites the previous content per plan-mode rules.
 
+> **Corrections (2026-05-15) — read before acting on this plan.** Two decisions in
+> the body below are now superseded; they are kept for history but corrected here:
+>
+> 1. **Microphone posture — "Hard Rule 6: no microphone ever" is RESCINDED.** The
+>    current posture is an **opt-in boundary microphone** governed by a physical
+>    hardware kill switch + an always-visible UI toggle + ephemeral STT
+>    (transcript-only; raw audio discarded by default), used **only** for the WA
+>    DOL "practice commentary driving" exercise. The public synthetic demo still
+>    captures no audio. Everywhere this plan says "no mic ever / Hard Rule 6,"
+>    read the opt-in + hardware-kill-switch posture instead.
+> 2. **Repo name.** The repo shipped as **`Opendrive-EDU/Opendrive-Clipboard`**
+>    (public), not `Opendrivecore/opendrive-clipboard`. The private Beacon
+>    verification companion is `Opendrive-EDU/opendrive-beacon-private`.
+
 ---
 
 ## Challenge at a glance
@@ -128,9 +142,9 @@ All three MCP servers ship in the same Cloud Run deployment for the demo. The ag
 
 Per brief Section 8 — **new public repository, demo data only, no live student PII, no Beacon production secrets, complete OSS license visible.**
 
-- Repo: `Opendrivecore/opendrive-clipboard` (matches Codex's `GOOGLE_CLOUD_AGENT_SETUP_PLAN.md` Section 7 naming so the two docs align)
+- Repo: **`Opendrive-EDU/Opendrive-Clipboard`** (public; shipped — earlier drafts said `Opendrivecore/opendrive-clipboard`)
 - License: Apache 2.0 (matches Beacon ML license posture; Devpost requires a "visible license")
-- Excludes: real Beacon hardware, real student data, audio/microphone code (**Hard Rule 6** — no mic anywhere ever), Vault secrets, any private OpenDriveEDU integration
+- Excludes: real Beacon hardware, real student data, raw audio capture in the public synthetic demo (the production opt-in boundary mic — hardware kill switch + UI toggle + ephemeral STT — is **not** in this public repo), Vault secrets, any private OpenDriveEDU integration
 
 The existing `opendriveedu` mono-repo stays private and untouched by this work.
 
@@ -176,18 +190,18 @@ That doc is highly compatible with this plan and complements it. Division of lab
 - **This plan (`curried-mixing-orbit.md`)** — submission strategy: track choice, deadlines, build phases, DOL framing constraints, risk table, verification checklist. Lives in `~/.claude/plans/`.
 - **Codex's plan (`GOOGLE_CLOUD_AGENT_SETUP_PLAN.md`)** — engineering spec: 7-agent ADK design (Orchestrator + Scenario Intake + Lesson Retrieval + Debrief Draft + Reflection/Family Summary + Language Access + Review Gate), gcloud bootstrap commands, env-var contracts, 17-task work plan. After the move it lives at `.mdfiles/hackathon/GOOGLE_CLOUD_AGENT_SETUP_PLAN.md` and eventually copies into the public repo as `docs/ENGINEERING_PLAN.md`.
 
-Where the two disagree, the Codex doc wins on agent count and tooling specifics; this plan wins on track choice, repo naming, and the DOL framing gate. Both name the same repo (`opendrive-clipboard`) — that locks it.
+Where the two disagree, the Codex doc wins on agent count and tooling specifics; this plan wins on track choice, repo naming, and the DOL framing gate. The shipped repo is `Opendrive-EDU/Opendrive-Clipboard`.
 
 ---
 
 ## DOL framing constraints applied to all Devpost surfaces
 
-Every public artifact (devpost project page, demo video voice-over, README, code comments, in-product copy) must comply with Hard Rules 1, 2, 3, 6 from the DOL scrub:
+Every public artifact (devpost project page, demo video voice-over, README, code comments, in-product copy) must comply with Hard Rules 1, 2, 3 from the DOL scrub:
 
 1. The word "coach" is reserved for the human in the passenger seat.
 2. Do not use role labels that imply the system teaches, instructs, evaluates readiness, or talks directly to the student.
 3. Do not pair live timing language with coaching language.
-6. **No microphone in the vehicle, ever.** Beacon never captures cabin audio.
+4. **Microphone (was "Hard Rule 6: no mic ever" — RESCINDED).** Mic is opt-in only, gated by a physical hardware kill switch + always-visible UI toggle + ephemeral STT (transcript-only), used solely for the WA DOL "practice commentary driving" exercise. The public synthetic demo captures no audio. Never imply covert or always-on audio.
 
 Tagline guidance for the Devpost project page (drafts to choose from):
 
@@ -289,7 +303,7 @@ Neither requires committing code to the mono-repo for this submission.
 | Cloud Run cold starts blow the 3-min demo budget | Pre-warm Cloud Run with a synthetic request 30 s before recording; consider min-instances=1 on the agent service for the recording window only |
 | Public repo accidentally leaks DOL-misread phrases | Run the DOL framing grep gate against the new repo before every push |
 | The 3 already-submitted registration questions may have committed Mr. Law to a track or framing that conflicts with this plan | Resolve in Phase A: user pastes current Q+A, plan revises to align |
-| Microphone reference accidentally re-enters via Gemini-generated copy | Add `cabin\|microphone\|audio capture\|VAD\|lavalier` to the pre-push grep gate |
+| Gemini-generated copy implies covert or always-on audio | Grep gate flags `always.?on (mic|audio)`, `covert`, `cabin recording`; require any mic mention to pair with "opt-in", "hardware kill switch", and "ephemeral STT" |
 | Devpost judges expect a flashier "AI does the thing live" demo than our human-in-the-loop story allows | Lean into it as the differentiator, not a limitation: the regulatory necessity IS the innovation. Frame in the demo voice-over. |
 | Submission form deadline buffer is too tight | Internal deadline is **June 4 EOD (24-hour buffer)**, not June 5 5pm PT |
 
@@ -316,7 +330,7 @@ Neither requires committing code to the mono-repo for this submission.
 - Live integration with Beacon hardware in the actual vehicle. Demo uses fake/seeded drive data only.
 - Real student records or PII. Demo log is fake-data-only.
 - Track 3 architectural mandates (A2A protocol, Agent Identity, Marketplace listing). Designed-in where free; not pursued.
-- Microphone or audio capture of any kind. **Hard Rule 6.** The instructor "TAG INTERVENTION" tap event is the only verbal-intervention signal in any timeline shown to judges.
+- Raw audio capture in the public synthetic demo. The opt-in boundary mic (hardware kill switch + UI toggle + ephemeral STT, DOL commentary-driving only) is a production feature, not part of the synthetic judge demo. The instructor "TAG INTERVENTION" tap event is the only verbal-intervention signal in any timeline shown to judges.
 - The Move 7 doc scrub for the OpenDriveEDU mono-repo. Tracked separately under TaskList #38 and #39; this plan does not block on it.
 - Internal changes to the older OpenDriveEDU mono-repo. Out of scope; new Beacon and Clipboard UI work targets React/Inertia.
 - Voice TTS, dragon voice, kiosk in-car AI audio output. Out of scope and disallowed by the project boundary.
@@ -325,7 +339,7 @@ Neither requires committing code to the mono-repo for this submission.
 
 ## Open questions for the user (to confirm before Phase A starts)
 
-1. **Repo name & GitHub org** — locked to `Opendrivecore/opendrive-clipboard` (matches Codex doc). Override only if the user wants a different name.
+1. **Repo name & GitHub org** — RESOLVED: shipped as `Opendrive-EDU/Opendrive-Clipboard` (public) + `Opendrive-EDU/opendrive-beacon-private` (private verification companion).
 2. **The 3 already-submitted Devpost registration questions** — paste the verbatim Q+A so this plan can revise them for DOL-framing safety before the May 7 kickoff.
 3. **Track confirmation** — Track 1 is the locked recommendation. Override only if Mr. Law explicitly wants Track 3 (which would force A2A + Marketplace + enterprise pivot).
 4. **Demo video voice & camera** — Mr. Law on-camera, or screen-only with voice-over? Affects video shoot scheduling in Phase E.
