@@ -28,7 +28,7 @@ class ClipboardServerTest(unittest.TestCase):
         run = self.post_json(
             "/api/demo-runs",
             {
-                "scenario_id": "residential-following-distance",
+                "scenario_id": "drive-1",
                 "instructor_notes": "Synthetic server test.",
             },
         )
@@ -44,7 +44,7 @@ class ClipboardServerTest(unittest.TestCase):
     def test_drive_sheet_grader_endpoints(self):
         report = self.post_json(
             "/api/drive-reports",
-            {"scenario_id": "residential-following-distance"},
+            {"scenario_id": "drive-1"},
         )
         self.assertEqual(report["status"], "DRAFT_INSTRUCTOR_REVIEW_REQUIRED")
         self.assertFalse(report["has_audio"])

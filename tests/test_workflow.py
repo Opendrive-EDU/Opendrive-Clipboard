@@ -9,7 +9,7 @@ class ClipboardWorkflowTest(unittest.TestCase):
     def test_runner_stops_at_instructor_review_gate(self):
         store = DemoStore()
         run = ClipboardRunner(store).run(
-            "residential-following-distance",
+            "drive-1",
             "Learner should repeat mirror cadence before the next merge.",
         )
 
@@ -26,7 +26,7 @@ class ClipboardWorkflowTest(unittest.TestCase):
 
     def test_review_decision_updates_demo_only_state(self):
         store = DemoStore()
-        run = ClipboardRunner(store).run("yellow-light-decision")
+        run = ClipboardRunner(store).run("drive-2")
 
         reviewed = InstructorReviewTools(store).record_instructor_decision(
             run["draft"]["id"],

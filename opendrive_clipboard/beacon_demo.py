@@ -8,6 +8,12 @@ or a forward camera.
 
 Strict properties:
 
+- A scenario is a one-hour lesson (Drive 1-6). The synthetic recording is
+  a compact, deterministic, *representative* window (not real-time): each
+  lesson event's MM:SS mark is scaled proportionally into the sampled
+  window so the grader still responds to the events while the payload
+  stays tiny. ``meta["lesson_minutes"]`` carries the true lesson length;
+  ``meta["duration_s"]`` is the sampled-window length.
 - Output is deterministic per ``scenario_id`` (seeded ``random.Random``).
   Two calls produce identical bytes so judges can reproduce the demo.
 - ``meta["has_audio"]`` is ``False`` for this synthetic recording. The
@@ -61,8 +67,14 @@ def mock_beacon_recording(scenario_id: str) -> dict:
         "meta": {
             "scenario_id": scenario_id,
             "scenario_title": scenario["title"],
+            "lesson_minutes": _lesson_minutes(scenario),
             "duration_s": duration,
             "sample_hz": SAMPLE_HZ,
+            "sampled_window_note": (
+                "Compact representative window. The lesson is "
+                f"{_lesson_minutes(scenario)} minutes; event marks are scaled "
+                "into this window for deterministic, low-payload grading."
+            ),
             "synthetic": True,
             "has_audio": False,
             "mic_disclosure": (
@@ -95,27 +107,42 @@ def _seed(scenario_id: str) -> int:
 def _build_can(rng: random.Random, timestamps: list[float], scenario: dict) -> list[dict]:
     """Plausible speed / throttle / brake / steering trace, scenario-shaped."""
 
-    event_seconds = {_seconds(event["time"]) for event in scenario["events"]}
+    window_s = len(timestamps) / SAMPLE_HZ if timestamps else DEFAULT_DURATION_S
+    event_seconds = _scaled_event_seconds(scenario, window_s)
     samples: list[dict] = []
     base_speed = 22.0 if "residential" in scenario["route"].lower() else 28.0
 
+    # Synthetic improvement arc: ``competence`` (0=rough .. 1=polished) drives
+    # how hard the learner brakes/accelerates around an event and how much
+    # speed/steering noise they carry. A polished Drive 6 reads smoother than
+    # a first-hour Drive 1. ``severity`` is the rough-driver weight.
+    competence = float(scenario.get("competence", 0.5))
+    competence = max(0.0, min(1.0, competence))
+    severity = 1.0 - competence
+
     for t in timestamps:
-        # gentle sinusoidal cruise + per-scenario jitter
+        # gentle sinusoidal cruise + per-scenario jitter (noise shrinks as the
+        # learner improves, never to zero so the trace stays textured)
         cruise = base_speed + 2.0 * math.sin(t / 6.0)
-        jitter = rng.uniform(-0.6, 0.6)
+        jitter = rng.uniform(-0.6, 0.6) * (0.35 + 0.65 * severity)
         speed = cruise + jitter
 
-        # near event timestamps, simulate brake/throttle behavior
+        # near event timestamps, simulate brake/throttle behavior. A rough
+        # driver dumps speed and stabs the brake; a polished driver eases.
         near_event = any(abs(t - sec) <= 1.5 for sec in event_seconds)
         if near_event:
-            speed -= 3.5
-            throttle = max(0.0, 18.0 + rng.uniform(-4.0, 4.0))
-            brake = min(95.0, 55.0 + rng.uniform(-8.0, 12.0))
+            speed -= 1.4 + 3.0 * severity
+            throttle = max(0.0, (30.0 - 12.0 * severity) + rng.uniform(-4.0, 4.0) * (0.4 + severity))
+            brake = min(95.0, (10.0 + 52.0 * severity) + rng.uniform(-6.0, 10.0) * (0.4 + severity))
         else:
-            throttle = max(0.0, 35.0 + rng.uniform(-6.0, 6.0))
-            brake = max(0.0, 6.0 + rng.uniform(-4.0, 6.0))
+            throttle = max(0.0, 33.0 + rng.uniform(-6.0, 6.0) * (0.4 + severity))
+            brake = max(0.0, 5.0 + rng.uniform(-3.0, 5.0) * (0.4 + severity))
 
-        steering = 4.0 * math.sin(t / 4.0) + rng.uniform(-1.2, 1.2)
+        # Keep the sinusoid (preserves mirror/scan cadence proxy); only the
+        # amplitude and noise relax with competence, lowering lateral load.
+        steering = (2.4 + 1.8 * severity) * math.sin(t / 4.0) + rng.uniform(
+            -1.2, 1.2
+        ) * (0.35 + 0.65 * severity)
 
         samples.append(
             {
@@ -208,11 +235,14 @@ def _build_forward_camera_labels(scenario: dict) -> list[dict]:
 
 
 def _build_intervention_taps(scenario: dict) -> list[dict]:
-    """Instructor on-screen taps anchored on scenario event times.
+    """Instructor on-screen taps for events the instructor verbally intervened on.
 
-    The tap event is the instructor's verbal-intervention marker — it carries a
-    timestamp only, never audio. It is independent of the boundary mic used for
-    DOL commentary-driving exercises.
+    Only events flagged ``"intervention": True`` produce a tap — a one-hour
+    lesson has many observed teachable moments but few moments that required
+    the instructor to step in. The tap carries a timestamp only, never audio,
+    and is independent of the boundary mic used for DOL commentary-driving
+    exercises. ``t`` is the real lesson-time mark (for display); the grader
+    uses only the tap count.
     """
 
     return [
@@ -222,6 +252,7 @@ def _build_intervention_taps(scenario: dict) -> list[dict]:
             "pattern": event["pattern"],
         }
         for event in scenario["events"]
+        if event.get("intervention")
     ]
 
 
@@ -230,6 +261,39 @@ def _seconds(stamp: str) -> int:
 
     minutes, seconds = stamp.split(":")
     return int(minutes) * 60 + int(seconds)
+
+
+def _lesson_seconds(scenario: dict) -> int:
+    """Total lesson length in seconds (from ``duration_min``, with fallback)."""
+
+    minutes = scenario.get("duration_min")
+    if minutes:
+        return int(minutes) * 60
+    event_secs = [_seconds(e["time"]) for e in scenario["events"]]
+    return max(event_secs) if event_secs else DEFAULT_DURATION_S
+
+
+def _lesson_minutes(scenario: dict) -> int:
+    """Lesson length in whole minutes, never below 1."""
+
+    return max(1, round(_lesson_seconds(scenario) / 60))
+
+
+def _scaled_event_seconds(scenario: dict, window_s: float) -> set[int]:
+    """Map each event's lesson-time mark into the compact sampled window.
+
+    A one-hour lesson is compressed into ``window_s`` seconds so the
+    synthetic CAN/IMU trace still reacts to every event while the payload
+    stays tiny. Pure arithmetic on fixed event times — fully deterministic.
+    """
+
+    span = max(1, _lesson_seconds(scenario))
+    usable = max(1.0, window_s - 2.0)
+    scaled: set[int] = set()
+    for event in scenario["events"]:
+        fraction = min(1.0, _seconds(event["time"]) / span)
+        scaled.add(1 + round(fraction * usable))
+    return scaled
 
 
 def beacon_recording(scenario_id: str) -> dict:
