@@ -22,10 +22,12 @@ cd "$(dirname "$0")/.."
 : "${SPEECHIFY_VOICE_YOUTH:=jack}"
 
 env_vars="OPENDRIVE_CLIPBOARD_ENABLE_GEMINI=false,SPEECHIFY_ENABLE_TTS=${ENABLE_TTS}"
-secret_args=()
 if [ "$ENABLE_TTS" = "true" ]; then
   env_vars="${env_vars},SPEECHIFY_VOICE_DEFAULT=${SPEECHIFY_VOICE_DEFAULT},SPEECHIFY_VOICE_YOUTH=${SPEECHIFY_VOICE_YOUTH}"
   secret_args=(--set-secrets "SPEECHIFY_API_KEY=SPEECHIFY_API_KEY:latest")
+else
+  # Disabled: ensure the key is NOT mounted to the judged container at all.
+  secret_args=(--clear-secrets)
 fi
 
 gcloud run deploy "$SERVICE" \
