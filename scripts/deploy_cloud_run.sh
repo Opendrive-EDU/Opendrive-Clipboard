@@ -15,7 +15,11 @@ cd "$(dirname "$0")/.."
 # passed as plaintext env).
 : "${ENABLE_TTS:=false}"
 : "${SPEECHIFY_VOICE_DEFAULT:=scott}"
-: "${SPEECHIFY_VOICE_YOUTH:=$SPEECHIFY_VOICE_DEFAULT}"
+# Youth Mode = an age-appropriate API voice for the learner's copy. NOT a
+# celebrity voice: Speechify's API exposes no celebrity/Snoop voices and they
+# are not licensed for product redistribution. Swap to any catalog id, e.g.
+# SPEECHIFY_VOICE_YOUTH=nick (teen) | jack (young-adult) | evelyn | linda
+: "${SPEECHIFY_VOICE_YOUTH:=jack}"
 
 env_vars="OPENDRIVE_CLIPBOARD_ENABLE_GEMINI=false,SPEECHIFY_ENABLE_TTS=${ENABLE_TTS}"
 secret_args=()

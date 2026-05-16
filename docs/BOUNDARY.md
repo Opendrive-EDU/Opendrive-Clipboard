@@ -55,8 +55,8 @@ OpenDrive Clipboard is a **post-drive debrief drafting agent** that produces dra
 
 - Text-to-speech is an **optional accessibility add-on**, OFF by default (`SPEECHIFY_ENABLE_TTS`). The public demo ships with zero secrets and no audio.
 - Audio can only ever read back text the licensed instructor has **already approved** — the `/api/tts` endpoint pulls the comment from the stored, approved artifact, never from the client. There is no path to voice an unreviewed draft.
-- The judge-facing default is a **professional voice**. "Youth Mode" (an energetic / celebrity voice such as Snoop Dogg) is opt-in, instructor-gated, and intended only for the learner's own approved copy — never the judge demo default.
-- A celebrity voice is used **only** if it is licensed for redistribution on the configured Speechify plan; any voice/SDK/network error automatically falls back to the professional voice and is flagged. Speechify never authors or alters a debrief — it only reads approved text.
+- The judge-facing default is a **professional voice**. "Youth Mode" is opt-in, instructor-gated, and intended only for the learner's own approved copy — never the judge demo default. It uses an **age-appropriate voice from the Speechify API catalog** (e.g. a young-adult voice), **not a celebrity voice**: Speechify's API exposes no celebrity/Snoop voices, and celebrity voices are not licensed for product redistribution.
+- Any voice/SDK/network error automatically falls back to the professional voice and is flagged. Speechify never authors or alters a debrief — it only reads approved text.
 
 ---
 
