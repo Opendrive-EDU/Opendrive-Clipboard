@@ -199,6 +199,16 @@ class ClipboardRequestHandler(BaseHTTPRequestHandler):
             content_type = "image/png"
         if file_path.suffix == ".ico":
             content_type = "image/x-icon"
+        if file_path.suffix == ".svg":
+            content_type = "image/svg+xml"
+        if file_path.suffix == ".webmanifest":
+            content_type = "application/manifest+json"
+        if file_path.suffix in {".jpg", ".jpeg"}:
+            content_type = "image/jpeg"
+        if file_path.suffix == ".webp":
+            content_type = "image/webp"
+        if file_path.suffix == ".json":
+            content_type = "application/json"
 
         body = file_path.read_bytes()
         self.send_response(HTTPStatus.OK)
