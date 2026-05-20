@@ -4,7 +4,7 @@
 **Subtitle:** An instructor-reviewed drafting assistant for post-drive teachable moments  
 **Primary challenge track:** Track 1 — Build / Net-New Agents  
 **Stretch challenge track:** Track 3 — Refactor / Marketplace & Enterprise Ready  
-**Audience:** Claude, Codex, Mr. Law  
+**Audience:** Mr. Law and the engineering team  
 **Last updated:** 2026-05-01  
 
 ---
@@ -914,7 +914,7 @@ No tool can save a log without instructor approval.
 
 ---
 
-## 13. Claude / Codex Work Plan
+## 13. Work Plan
 
 ### Task 0 — Docs first
 
@@ -1063,7 +1063,7 @@ Only after Track 1 works:
 
 ---
 
-## 17. Final Build Command for Claude / Codex
+## 17. Final Build Command
 
 Use this command instruction:
 
