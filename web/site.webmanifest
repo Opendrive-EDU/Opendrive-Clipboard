@@ -1,6 +1,7 @@
 {
-  "name": "OpenDrive EDU",
-  "short_name": "OpenDrive",
+  "name": "OpenDrive Clipboard · OpenDriveEDU",
+  "short_name": "Clipboard",
+  "description": "AI organizes the moment. The instructor leads the lesson.",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -14,6 +15,7 @@
     }
   ],
   "theme_color": "#1766FF",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "background_color": "#F8FAFC",
+  "display": "standalone",
+  "start_url": "/"
 }
