@@ -14,20 +14,8 @@ const commentsDraftEl = document.querySelector('#comments-draft');
 const reactionInputs = document.querySelectorAll('input[name="reaction"]');
 const reviewStateEl = document.querySelector('#review-state');
 const reviewButtons = document.querySelectorAll('[data-decision]');
-const audioControlsEl = document.querySelector('#audio-controls');
-const listenBtn = document.querySelector('#listen-btn');
-const youthModeEl = document.querySelector('#youth-mode');
-const debriefAudioEl = document.querySelector('#debrief-audio');
-const audioNoteEl = document.querySelector('#audio-note');
 
 let activeReportId = null;
-
-function b64ToBlob(b64, mime) {
-    const bin = atob(b64);
-    const bytes = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i += 1) bytes[i] = bin.charCodeAt(i);
-    return new Blob([bytes], { type: mime || 'audio/mpeg' });
-}
 
 async function loadScenarios() {
     const response = await fetch('/api/scenarios');
@@ -49,7 +37,6 @@ async function runGrader() {
         const report = await response.json();
         activeReportId = report.id;
         renderReport(report);
-        audioControlsEl.classList.add('hidden');
         reviewStateEl.textContent = `Awaiting licensed instructor review. Status: ${report.status_label}`;
     } finally {
         runButton.disabled = false;
@@ -69,49 +56,6 @@ async function recordDecision(decision) {
     });
     const report = await response.json();
     reviewStateEl.textContent = `Preview state: ${report.review_decision}. ${report.status_label || ''} No DOL record was created.`;
-    audioControlsEl.classList.toggle('hidden', report.review_decision !== 'approve');
-}
-
-async function speakDebrief() {
-    listenBtn.disabled = true;
-    listenBtn.textContent = 'Synthesizing...';
-    try {
-        const response = await fetch('/api/tts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                report_id: activeReportId,
-                mode: youthModeEl.checked ? 'youth' : 'professional',
-            }),
-        });
-        const payload = await response.json();
-        if (!response.ok) {
-            audioNoteEl.textContent = payload.error || 'Could not generate audio.';
-            return;
-        }
-        if (!payload.enabled) {
-            audioNoteEl.textContent = 'Audio not configured (Speechify TTS is disabled for this demo).';
-            return;
-        }
-        if (debriefAudioEl.dataset.url) URL.revokeObjectURL(debriefAudioEl.dataset.url);
-        const url = URL.createObjectURL(b64ToBlob(payload.audio_b64, payload.mime));
-        debriefAudioEl.dataset.url = url;
-        debriefAudioEl.src = url;
-        debriefAudioEl.controls = true;
-        debriefAudioEl.hidden = false;
-        const voiceMsg = payload.voice_fell_back
-            ? `Youth voice unavailable on this plan - used the professional voice (${payload.voice}).`
-            : `Voice: ${payload.voice} (${payload.mode}).`;
-        try {
-            await debriefAudioEl.play();
-            audioNoteEl.textContent = `${voiceMsg} Reads back only the instructor-approved comment.`;
-        } catch (err) {
-            audioNoteEl.textContent = `${voiceMsg} Press the ▶ on the player below to listen.`;
-        }
-    } finally {
-        listenBtn.disabled = false;
-        listenBtn.textContent = '▶ Listen to approved comment';
-    }
 }
 
 function renderReport(report) {
@@ -289,6 +233,5 @@ runButton.addEventListener('click', runGrader);
 reviewButtons.forEach((button) => {
     button.addEventListener('click', () => recordDecision(button.dataset.decision));
 });
-listenBtn.addEventListener('click', speakDebrief);
 
 loadScenarios();

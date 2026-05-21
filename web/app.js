@@ -5,20 +5,8 @@ const traceEl = document.querySelector('#trace');
 const draftEl = document.querySelector('#draft');
 const reviewStateEl = document.querySelector('#review-state');
 const reviewButtons = document.querySelectorAll('[data-decision]');
-const audioControlsEl = document.querySelector('#audio-controls');
-const listenBtn = document.querySelector('#listen-btn');
-const youthModeEl = document.querySelector('#youth-mode');
-const debriefAudioEl = document.querySelector('#debrief-audio');
-const audioNoteEl = document.querySelector('#audio-note');
 
 let activeDraftId = null;
-
-function b64ToBlob(b64, mime) {
-    const bin = atob(b64);
-    const bytes = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i += 1) bytes[i] = bin.charCodeAt(i);
-    return new Blob([bytes], { type: mime || 'audio/mpeg' });
-}
 
 async function loadScenarios() {
     const response = await fetch('/api/scenarios');
@@ -49,7 +37,6 @@ async function runDemo() {
         activeDraftId = run.draft.id;
         renderTrace(run.trace);
         renderDraft(run.draft);
-        audioControlsEl.classList.add('hidden');
         reviewStateEl.textContent = 'Awaiting licensed instructor review.';
     } finally {
         runButton.disabled = false;
@@ -73,49 +60,6 @@ async function recordDecision(decision) {
     const draft = await response.json();
 
     reviewStateEl.textContent = `Preview state: ${draft.review_decision}. No official record was created.`;
-    audioControlsEl.classList.toggle('hidden', draft.review_decision !== 'approve');
-}
-
-async function speakDraft() {
-    listenBtn.disabled = true;
-    listenBtn.textContent = 'Synthesizing...';
-    try {
-        const response = await fetch('/api/tts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                draft_id: activeDraftId,
-                mode: youthModeEl.checked ? 'youth' : 'professional',
-            }),
-        });
-        const payload = await response.json();
-        if (!response.ok) {
-            audioNoteEl.textContent = payload.error || 'Could not generate audio.';
-            return;
-        }
-        if (!payload.enabled) {
-            audioNoteEl.textContent = 'Audio not configured (Speechify TTS is disabled for this demo).';
-            return;
-        }
-        if (debriefAudioEl.dataset.url) URL.revokeObjectURL(debriefAudioEl.dataset.url);
-        const url = URL.createObjectURL(b64ToBlob(payload.audio_b64, payload.mime));
-        debriefAudioEl.dataset.url = url;
-        debriefAudioEl.src = url;
-        debriefAudioEl.controls = true;
-        debriefAudioEl.hidden = false;
-        const voiceMsg = payload.voice_fell_back
-            ? `Youth voice unavailable on this plan - used the professional voice (${payload.voice}).`
-            : `Voice: ${payload.voice} (${payload.mode}).`;
-        try {
-            await debriefAudioEl.play();
-            audioNoteEl.textContent = `${voiceMsg} Reads back only the instructor-approved draft.`;
-        } catch (err) {
-            audioNoteEl.textContent = `${voiceMsg} Press the ▶ on the player below to listen.`;
-        }
-    } finally {
-        listenBtn.disabled = false;
-        listenBtn.textContent = '▶ Listen to approved draft';
-    }
 }
 
 function renderTrace(trace) {
@@ -155,6 +99,5 @@ runButton.addEventListener('click', runDemo);
 reviewButtons.forEach((button) => {
     button.addEventListener('click', () => recordDecision(button.dataset.decision));
 });
-listenBtn.addEventListener('click', speakDraft);
 
 loadScenarios();
