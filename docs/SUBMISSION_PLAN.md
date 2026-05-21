@@ -35,7 +35,7 @@ This file previously held the DOL framing scrub plan. That work is now tracked e
 
 Track 1 fits because it matches reality:
 
-- The **agent layer does not exist yet.** The only "draft post-drive note" code referenced anywhere in the working tree is `ClaudeAnalysisService` — and a grep proves it's mentioned only in `docs/ML-ARCHITECTURE-ROADMAP.md`, never implemented as PHP. Net-new is the truthful framing.
+- The **agent layer does not exist yet.** The previously-considered "draft post-drive note" service is referenced only in `docs/ML-ARCHITECTURE-ROADMAP.md` and was never implemented as PHP. Net-new is the truthful framing.
 - Track 1 explicitly calls out **MCP** as the way agents "securely connect to external tools, gather context, and execute tasks autonomously." That is a precise fit for what the Clipboard needs to do (pull a demo drive's events, look up curriculum, draft a note, queue for review).
 - Track 1 allows ADK **or** supported OSS frameworks (LangChain, CrewAI). Gives implementation flexibility if ADK has rough edges in early May.
 
@@ -128,7 +128,7 @@ All three MCP servers ship in the same Cloud Run deployment for the demo. The ag
 
 Per brief Section 8 — **new public repository, demo data only, no live student PII, no Beacon production secrets, complete OSS license visible.**
 
-- Repo: `Opendrivecore/opendrive-clipboard` (matches Codex's `GOOGLE_CLOUD_AGENT_SETUP_PLAN.md` Section 7 naming so the two docs align)
+- Repo: `Opendrivecore/opendrive-clipboard` (matches the engineering plan (`GOOGLE_CLOUD_AGENT_SETUP_PLAN.md`) Section 7 naming so the two docs align)
 - License: Apache 2.0 (matches Beacon ML license posture; Devpost requires a "visible license")
 - Excludes: real Beacon hardware, real student data, audio/microphone code (**Hard Rule 6** — no mic anywhere ever), Vault secrets, any private OpenDriveEDU integration
 
@@ -142,7 +142,7 @@ The user asked whether the hackathon should live inside this OpenDriveEDU mono-r
 
 | Where | What goes there | Why |
 |---|---|---|
-| `~/PhpstormProjects/opendriveedu/.mdfiles/hackathon/` (this mono-repo, private) | Planning docs, briefs, the Codex engineering plan, the DOL-framing checklist, scratch notes | Keeps Mr. Law's planning where his other planning already lives; same Claude Code terminal/session reads it; never risks public exposure |
+| `~/PhpstormProjects/opendriveedu/.mdfiles/hackathon/` (this mono-repo, private) | Planning docs, briefs, the engineering plan, the DOL-framing checklist, scratch notes | Keeps Mr. Law's planning where his other planning already lives; same engineering terminal/session reads it; never risks public exposure |
 | `~/PhpstormProjects/opendrive-clipboard/` (sibling folder, NEW git repo, public on GitHub) | All shipping code — agent, MCP-style tools, review-gate dashboard, deploy manifests, README, LICENSE, demo data | Devpost requires a public OSS repo; clean filesystem boundary makes "is this safe to publish?" a one-question check |
 
 ### Why not the alternatives
@@ -157,11 +157,11 @@ True. Cloud Run is the runtime; the GitHub repo is the submission artifact. The 
 
 ### Phase A file moves (planning side)
 
-Both Codex's setup plan and the existing brief currently live under `.mdfiles/beacon/`. Beacon is the production sensor stack; the hackathon is a demo of a downstream concept. Move them so the workstream split matches the repo split:
+Both the engineering setup plan and the existing brief currently live under `.mdfiles/beacon/`. Beacon is the production sensor stack; the hackathon is a demo of a downstream concept. Move them so the workstream split matches the repo split:
 
 | From | To | Notes |
 |---|---|---|
-| `.mdfiles/beacon/GOOGLE_CLOUD_AGENT_SETUP_PLAN.md` | `.mdfiles/hackathon/GOOGLE_CLOUD_AGENT_SETUP_PLAN.md` | Codex's 1093-line engineering spec; becomes the in-repo build doc |
+| `.mdfiles/beacon/GOOGLE_CLOUD_AGENT_SETUP_PLAN.md` | `.mdfiles/hackathon/GOOGLE_CLOUD_AGENT_SETUP_PLAN.md` | the 1093-line engineering spec; becomes the in-repo build doc |
 | `.mdfiles/beacon/OpenDrive_Instructor_Debrief_Assistant_Brief.md` | `.mdfiles/hackathon/OpenDrive_Instructor_Debrief_Assistant_Brief.md` | Product spec (this plan's anchor) |
 | `docs/dol-edu/OpenDrive_Instructor_Debrief_Assistant_Brief.md` | (leave) | Public-facing DOL doc; stays where regulators expect it |
 | `docs/dol-edu/BEACON-IS-AND-IS-NOT.md` | (leave) | Same — public regulatory boundary statement, path is shipped |
@@ -169,14 +169,14 @@ Both Codex's setup plan and the existing brief currently live under `.mdfiles/be
 
 Grep verified zero cross-references to either source path anywhere in the working tree, so the two `.mdfiles/beacon/` → `.mdfiles/hackathon/` moves are safe `git mv` operations.
 
-### Reconciliation with Codex's `GOOGLE_CLOUD_AGENT_SETUP_PLAN.md`
+### Reconciliation with the engineering plan (`GOOGLE_CLOUD_AGENT_SETUP_PLAN.md`)
 
 That doc is highly compatible with this plan and complements it. Division of labor:
 
-- **This plan (`curried-mixing-orbit.md`)** — submission strategy: track choice, deadlines, build phases, DOL framing constraints, risk table, verification checklist. Lives in `~/.claude/plans/`.
-- **Codex's plan (`GOOGLE_CLOUD_AGENT_SETUP_PLAN.md`)** — engineering spec: 7-agent ADK design (Orchestrator + Scenario Intake + Lesson Retrieval + Debrief Draft + Reflection/Family Summary + Language Access + Review Gate), gcloud bootstrap commands, env-var contracts, 17-task work plan. After the move it lives at `.mdfiles/hackathon/GOOGLE_CLOUD_AGENT_SETUP_PLAN.md` and eventually copies into the public repo as `docs/ENGINEERING_PLAN.md`.
+- **This plan (`curried-mixing-orbit.md`)** — submission strategy: track choice, deadlines, build phases, DOL framing constraints, risk table, verification checklist. Lives in the engineering plans folder.
+- **the engineering plan (`GOOGLE_CLOUD_AGENT_SETUP_PLAN.md`)** — engineering spec: 7-agent ADK design (Orchestrator + Scenario Intake + Lesson Retrieval + Debrief Draft + Reflection/Family Summary + Language Access + Review Gate), gcloud bootstrap commands, env-var contracts, 17-task work plan. After the move it lives at `.mdfiles/hackathon/GOOGLE_CLOUD_AGENT_SETUP_PLAN.md` and eventually copies into the public repo as `docs/ENGINEERING_PLAN.md`.
 
-Where the two disagree, the Codex doc wins on agent count and tooling specifics; this plan wins on track choice, repo naming, and the DOL framing gate. Both name the same repo (`opendrive-clipboard`) — that locks it.
+Where the two disagree, the engineering doc wins on agent count and tooling specifics; this plan wins on track choice, repo naming, and the DOL framing gate. Both name the same repo (`opendrive-clipboard`) — that locks it.
 
 ---
 
@@ -325,7 +325,7 @@ Neither requires committing code to the mono-repo for this submission.
 
 ## Open questions for the user (to confirm before Phase A starts)
 
-1. **Repo name & GitHub org** — locked to `Opendrivecore/opendrive-clipboard` (matches Codex doc). Override only if the user wants a different name.
+1. **Repo name & GitHub org** — locked to `Opendrivecore/opendrive-clipboard` (matches the engineering doc). Override only if the user wants a different name.
 2. **The 3 already-submitted Devpost registration questions** — paste the verbatim Q+A so this plan can revise them for DOL-framing safety before the May 7 kickoff.
 3. **Track confirmation** — Track 1 is the locked recommendation. Override only if Mr. Law explicitly wants Track 3 (which would force A2A + Marketplace + enterprise pivot).
 4. **Demo video voice & camera** — Mr. Law on-camera, or screen-only with voice-over? Affects video shoot scheduling in Phase E.

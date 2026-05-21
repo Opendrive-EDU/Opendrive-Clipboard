@@ -1,37 +1,57 @@
-/* === OpenDrive Clipboard demo styles ==================================== */
-/* Bold indigo/pink palette. Brand colors hold across light and dark mode;  */
-/* neutrals flip automatically via prefers-color-scheme. No JS, no toggle.  */
+/* === OpenDrive Clipboard demo styles ====================================== */
+/* OpenDriveEDU brand-kit palette + box treatments. Brand tokens stable        */
+/* across light and dark mode; neutrals flip via prefers-color-scheme.          */
+/* DRAFT pill uses opendrive-red (#E53935) — the "human review required" mark.  */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
     color-scheme: light dark;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-    /* Brand — stable across modes */
-    --brand-fill: #4f46e5;          /* indigo-600 — primary buttons, accent strip */
-    --brand-fill-hover: #4338ca;    /* indigo-700 */
-    --brand-tint: rgb(79 70 229 / 0.08);
-    --pink: #ec4899;                /* rubix pink — DRAFT pill, Approve CTA */
-    --pink-hover: #db2777;
+    /* OpenDriveEDU palette — verbatim from tailwind.config.js extend.colors.opendrive */
+    --od-navy: #0A1328;
+    --od-blue: #1766FF;
+    --od-electric: #3D9CFF;
+    --od-ice: #F2F5F9;
+    --od-silver: #D1D5DB;
+    --od-red: #E53935;
+    --od-red-dark: #C62828;
+    --od-slate: #34405C;
+    --od-ink: #071024;
+    --od-cloud: #F8FAFC;
+
+    /* OpenDriveEDU shadows — verbatim from tailwind.config.js extend.boxShadow */
+    --shadow-soft: 0 18px 48px rgba(15, 23, 42, 0.10);
+    --shadow-glow: 0 24px 80px rgba(23, 102, 255, 0.24);
+    --shadow-navy: 0 24px 80px rgba(10, 19, 40, 0.28);
+
+    /* Aliases — keep existing class names working, point them at opendrive tokens */
+    --brand-fill: var(--od-blue);
+    --brand-fill-hover: var(--od-electric);
+    --brand-tint: rgba(23, 102, 255, 0.08);
+    --brand-text: var(--od-blue);
+    --pink: var(--od-red);            /* DRAFT pill — swapped from #ec4899 to opendrive-red */
+    --pink-hover: var(--od-red-dark);
 
     /* Light-mode neutrals (default) */
-    --bg: #f5f7ff;
+    --bg: var(--od-cloud);
     --surface: #ffffff;
-    --surface-soft: #f8fafc;
-    --surface-sunken: #f1f5f9;
-    --surface-tint: #eef2ff;
-    --border-strong: #d5e3ee;
-    --border-mid: #cbd5e1;
-    --border-soft: #e2e8f0;
-    --text: #0f172a;
-    --text-strong: #334155;
-    --text-mid: #475569;
-    --text-mute: #64748b;
+    --surface-soft: var(--od-ice);
+    --surface-sunken: #eef2f7;
+    --surface-tint: rgba(23, 102, 255, 0.06);
+    --border-strong: rgba(209, 213, 219, 0.85);
+    --border-mid: var(--od-silver);
+    --border-soft: rgba(209, 213, 219, 0.5);
+    --text: var(--od-navy);
+    --text-strong: var(--od-navy);
+    --text-mid: var(--od-slate);
+    --text-mute: var(--od-slate);
     --text-faint: #94a3b8;
-    --brand-text: #4f46e5;
-    --shadow-card: 0 12px 28px rgb(15 23 42 / 0.06);
-    --shadow-lift: 0 16px 32px rgb(79 70 229 / 0.12);
+    --shadow-card: var(--shadow-soft);
+    --shadow-lift: var(--shadow-glow);
 
-    /* Semantic (light) */
+    /* Semantic (light) — drive-sheet rating colors */
     --ok-bg: #ecfeff;
     --ok-text: #155e75;
     --watch-bg: #fef3c7;
@@ -44,7 +64,7 @@
     --info-text: #155e75;
     --rule-ok: #0891b2;
     --rule-watch: #d97706;
-    --rule-concern: #dc2626;
+    --rule-concern: var(--od-red);
 
     background: var(--bg);
     color: var(--text);
@@ -52,33 +72,35 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --bg: #0b1020;
-        --surface: #172033;
-        --surface-soft: #1f2b46;
-        --surface-sunken: #0f172a;
-        --surface-tint: rgb(79 70 229 / 0.15);
-        --border-strong: rgb(79 70 229 / 0.28);
-        --border-mid: rgb(148 163 184 / 0.22);
-        --border-soft: rgb(148 163 184 / 0.18);
-        --text: #e2e8f0;
-        --text-strong: #f1f5f9;
-        --text-mid: #cbd5e1;
-        --text-mute: #94a3b8;
-        --text-faint: #64748b;
-        --brand-text: #a5b4fc;
-        --brand-tint: rgb(129 140 248 / 0.12);
-        --shadow-card: 0 12px 32px rgb(0 0 0 / 0.45);
-        --shadow-lift: 0 16px 32px rgb(79 70 229 / 0.35);
+        --bg: var(--od-ink);
+        --surface: rgba(255, 255, 255, 0.04);
+        --surface-soft: rgba(255, 255, 255, 0.05);
+        --surface-sunken: rgba(255, 255, 255, 0.03);
+        --surface-tint: rgba(61, 156, 255, 0.10);
+        --border-strong: rgba(255, 255, 255, 0.12);
+        --border-mid: rgba(255, 255, 255, 0.15);
+        --border-soft: rgba(255, 255, 255, 0.08);
+        --text: #ffffff;
+        --text-strong: #ffffff;
+        --text-mid: rgba(255, 255, 255, 0.75);
+        --text-mute: rgba(255, 255, 255, 0.65);
+        --text-faint: rgba(255, 255, 255, 0.45);
+        --brand-fill: var(--od-electric);
+        --brand-fill-hover: #ffffff;
+        --brand-text: var(--od-electric);
+        --brand-tint: rgba(61, 156, 255, 0.16);
+        --shadow-card: var(--shadow-navy);
+        --shadow-lift: var(--shadow-glow);
 
-        --ok-bg: rgb(8 145 178 / 0.18);
+        --ok-bg: rgba(8, 145, 178, 0.18);
         --ok-text: #67e8f9;
-        --watch-bg: rgb(217 119 6 / 0.22);
+        --watch-bg: rgba(217, 119, 6, 0.22);
         --watch-text: #fcd34d;
-        --concern-bg: rgb(220 38 38 / 0.22);
+        --concern-bg: rgba(220, 38, 38, 0.22);
         --concern-text: #fca5a5;
-        --good-bg: rgb(22 163 74 / 0.22);
+        --good-bg: rgba(22, 163, 74, 0.22);
         --good-text: #86efac;
-        --info-bg: rgb(8 145 178 / 0.22);
+        --info-bg: rgba(8, 145, 178, 0.22);
         --info-text: #67e8f9;
     }
 }
@@ -91,43 +113,139 @@ body {
     margin: 0;
 }
 
+/* ============================================
+   BRAND UTILITIES (verbatim from OpenDriveEDU app.css @layer utilities)
+   ============================================ */
+
+.opendrive-road-line {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #1766ff, #3d9cff, transparent, #e53935, transparent);
+}
+
+.opendrive-grid {
+    background-image:
+        linear-gradient(rgba(23, 102, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 102, 255, 0.07) 1px, transparent 1px);
+    background-size: 34px 34px;
+}
+
+.hero-surface {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F2F5F9 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .hero-surface {
+        background: linear-gradient(180deg, var(--od-ink) 0%, var(--od-navy) 100%);
+    }
+}
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+
 .shell {
     width: min(1180px, calc(100% - 32px));
     margin: 0 auto;
     padding: 32px 0;
 }
 
-.hero,
-.panel {
-    border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    background: var(--surface);
-    /* Inset 4px brand-color strip on top + drop shadow */
-    box-shadow: inset 0 4px 0 var(--brand-fill), var(--shadow-card);
-}
+/* ============================================
+   HERO (left-aligned brand stack + status pill)
+   ============================================ */
 
 .hero {
+    border-radius: 2.5rem;
+    background: var(--surface);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-strong);
+    padding: 40px 36px 36px;
     display: grid;
     grid-template-columns: 1fr minmax(260px, 360px);
-    gap: 24px;
+    gap: 28px;
     align-items: end;
-    padding: 32px 28px 28px;
 }
 
-.hero-logo {
-    display: block;
-    margin: 0 0 14px;
-    border-radius: 12px;
+.hero.hero-surface {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F2F5F9 100%);
+    border: 1px solid var(--border-strong);
 }
+
+@media (prefers-color-scheme: dark) {
+    .hero.hero-surface {
+        background: linear-gradient(180deg, var(--od-ink) 0%, var(--od-navy) 100%);
+        border-color: var(--border-mid);
+    }
+}
+
+.hero-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    margin: 0 0 20px;
+}
+
+.hero-icon {
+    height: 56px;
+    width: 56px;
+    user-select: none;
+    display: block;
+}
+
+.hero-wordmark {
+    line-height: 1.1;
+}
+
+.brand-name {
+    margin: 0;
+    font-family: 'Sora', 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    color: var(--od-navy);
+}
+
+@media (prefers-color-scheme: dark) {
+    .brand-name { color: #ffffff; }
+}
+
+.brand-sub {
+    margin: 2px 0 0;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--od-blue);
+}
+
+@media (prefers-color-scheme: dark) {
+    .brand-sub { color: var(--od-electric); }
+}
+
+/* ============================================
+   PANELS (cards) — rounded-[2.5rem] OpenDriveEDU vocabulary
+   ============================================ */
 
 .panel {
-    padding: 26px 22px 22px;
-    transition: transform 160ms ease, box-shadow 160ms ease;
+    border: 1px solid var(--border-strong);
+    border-radius: 2rem;
+    background: var(--surface);
+    padding: 28px 26px 26px;
+    box-shadow: var(--shadow-soft);
+    transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
 }
 
 .panel:hover {
+    border-color: rgba(23, 102, 255, 0.35);
+    box-shadow: var(--shadow-glow);
     transform: translateY(-2px);
-    box-shadow: inset 0 4px 0 var(--brand-fill), var(--shadow-lift);
+}
+
+@media (prefers-color-scheme: dark) {
+    .panel:hover {
+        border-color: rgba(61, 156, 255, 0.45);
+    }
 }
 
 .grid {
@@ -140,35 +258,44 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.eyebrow {
-    margin: 0 0 10px;
-    color: var(--brand-text);
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-}
+/* ============================================
+   TYPOGRAPHY — Sora display + Inter body
+   ============================================ */
 
-h1,
-h2,
-p {
+h1, h2, p {
     margin-top: 0;
 }
 
 h1 {
-    margin-bottom: 12px;
-    color: var(--brand-text);
+    margin-bottom: 14px;
+    color: var(--od-navy);
+    font-family: 'Sora', 'Inter', sans-serif;
     font-size: clamp(34px, 5vw, 56px);
     font-weight: 800;
-    line-height: 1.02;
+    line-height: 1.04;
     letter-spacing: -0.02em;
+}
+
+@media (prefers-color-scheme: dark) {
+    h1 { color: #ffffff; }
 }
 
 h2 {
     margin-bottom: 14px;
     color: var(--text);
-    font-size: 18px;
+    font-family: 'Sora', 'Inter', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
     letter-spacing: -0.01em;
+}
+
+.eyebrow {
+    margin: 0 0 10px;
+    color: var(--brand-text);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
 }
 
 .lede {
@@ -178,14 +305,17 @@ h2 {
     line-height: 1.7;
 }
 
-/* DRAFT pill — the safety claim. Pink fill, dominates the hero. */
+/* ============================================
+   DRAFT pill — opendrive-red (the "human review required" mark)
+   ============================================ */
+
 .status-card {
-    border: 1px solid var(--pink);
-    border-radius: 8px;
-    background: var(--pink);
+    border: 1px solid var(--od-red);
+    border-radius: 1.25rem;
+    background: var(--od-red);
     color: #ffffff;
-    padding: 16px;
-    box-shadow: 0 10px 24px rgb(236 72 153 / 0.28);
+    padding: 18px 18px 16px;
+    box-shadow: 0 14px 32px rgba(229, 57, 53, 0.32);
 }
 
 .status-card strong,
@@ -195,25 +325,33 @@ h2 {
 
 .status-card strong {
     font-size: 14px;
-    letter-spacing: 0.04em;
+    font-weight: 900;
+    letter-spacing: 0.06em;
 }
 
 .status-card span {
     margin-top: 8px;
-    color: rgb(255 255 255 / 0.86);
+    color: rgba(255, 255, 255, 0.88);
     font-size: 13px;
     line-height: 1.5;
 }
 
-/* Informational tints — not the safety claim */
+/* ============================================
+   INFORMATIONAL TINTS
+   ============================================ */
+
 .review-state,
 .boundary {
     border: 1px solid var(--border-strong);
-    border-radius: 8px;
+    border-radius: 1.25rem;
     background: var(--surface-tint);
     color: var(--text);
     padding: 16px;
 }
+
+/* ============================================
+   FORMS + BUTTONS
+   ============================================ */
 
 label {
     display: block;
@@ -228,14 +366,14 @@ select,
 textarea,
 button {
     width: 100%;
-    border-radius: 8px;
+    border-radius: 1rem;
     font: inherit;
 }
 
 select,
 textarea {
     border: 1px solid var(--border-mid);
-    padding: 11px 12px;
+    padding: 12px 14px;
     color: var(--text);
     background: var(--surface-soft);
     transition: border-color 120ms ease, box-shadow 120ms ease;
@@ -244,26 +382,26 @@ textarea {
 select:focus,
 textarea:focus {
     outline: none;
-    border-color: var(--brand-fill);
+    border-color: var(--od-blue);
     box-shadow: 0 0 0 3px var(--brand-tint);
 }
 
 button {
     border: 0;
     margin-top: 16px;
-    padding: 12px 14px;
-    background: var(--brand-fill);
+    padding: 13px 18px;
+    background: var(--od-blue);
     color: #ffffff;
     font-weight: 800;
     letter-spacing: 0.01em;
     cursor: pointer;
-    transition: background 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+    transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
 button:hover {
-    background: var(--brand-fill-hover);
+    background: var(--od-electric);
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgb(79 70 229 / 0.25);
+    box-shadow: var(--shadow-glow);
 }
 
 button:focus-visible {
@@ -271,14 +409,14 @@ button:focus-visible {
     outline-offset: 2px;
 }
 
+/* Review-gate hierarchy: Approve uses the opendrive-red (DRAFT mark) for the */
+/* "moment of trust" — same semantic as the DRAFT pill. Others are outlined.  */
 .review-buttons {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px;
 }
 
-/* Review-gate hierarchy: Approve is the "moment of trust" — pink fill.    */
-/* Edit / Reject / Regenerate are indigo outlines (secondary actions).    */
 .review-buttons button {
     background: transparent;
     color: var(--brand-text);
@@ -287,23 +425,27 @@ button:focus-visible {
 
 .review-buttons button:hover {
     background: var(--brand-tint);
-    color: var(--brand-fill-hover);
+    color: var(--od-blue);
     box-shadow: none;
     transform: translateY(-1px);
 }
 
 .review-buttons button[data-decision="approve"] {
-    background: var(--pink);
-    border-color: var(--pink);
+    background: var(--od-red);
+    border-color: var(--od-red);
     color: #ffffff;
 }
 
 .review-buttons button[data-decision="approve"]:hover {
-    background: var(--pink-hover);
-    border-color: var(--pink-hover);
+    background: var(--od-red-dark);
+    border-color: var(--od-red-dark);
     color: #ffffff;
-    box-shadow: 0 8px 20px rgb(236 72 153 / 0.32);
+    box-shadow: 0 8px 20px rgba(229, 57, 53, 0.36);
 }
+
+/* ============================================
+   MICROCOPY + LISTS
+   ============================================ */
 
 .microcopy,
 .empty {
@@ -323,9 +465,9 @@ button:focus-visible {
 .check-list li,
 .draft-section {
     border: 1px solid var(--border-soft);
-    border-radius: 8px;
+    border-radius: 1rem;
     background: var(--surface-soft);
-    padding: 12px;
+    padding: 14px;
 }
 
 .trace {
@@ -335,10 +477,10 @@ button:focus-visible {
 
 .trace-row {
     border: 1px solid var(--border-soft);
-    border-left: 3px solid var(--brand-fill);
-    border-radius: 8px;
+    border-left: 3px solid var(--od-blue);
+    border-radius: 1rem;
     background: var(--surface-soft);
-    padding: 12px;
+    padding: 14px;
 }
 
 .trace-row strong {
@@ -360,7 +502,9 @@ button:focus-visible {
 .draft-section h3 {
     margin: 0 0 8px;
     color: var(--text);
+    font-family: 'Sora', 'Inter', sans-serif;
     font-size: 15px;
+    font-weight: 700;
 }
 
 .draft-section p {
@@ -380,7 +524,9 @@ button:focus-visible {
     }
 }
 
-/* --- Drive sheet view ----------------------------------------------------- */
+/* ============================================
+   DRIVE-SHEET VIEW
+   ============================================ */
 
 .hidden {
     display: none;
@@ -396,14 +542,15 @@ button:focus-visible {
 
 .audio-controls #listen-btn {
     justify-self: start;
-    background: var(--brand-fill);
+    width: auto;
+    background: var(--od-blue);
     color: #ffffff;
-    border: 1.5px solid var(--brand-fill);
+    border: 1.5px solid var(--od-blue);
 }
 
 .audio-controls #listen-btn:hover {
-    background: var(--brand-fill-hover);
-    border-color: var(--brand-fill-hover);
+    background: var(--od-electric);
+    border-color: var(--od-electric);
 }
 
 .audio-controls #listen-btn:disabled {
@@ -439,9 +586,9 @@ button:focus-visible {
     justify-content: space-between;
     gap: 12px;
     border: 1px solid var(--border-soft);
-    border-radius: 8px;
+    border-radius: 0.75rem;
     background: var(--surface-soft);
-    padding: 8px 12px;
+    padding: 10px 12px;
 }
 
 .meta-row strong {
@@ -464,9 +611,9 @@ button:focus-visible {
     display: flex;
     justify-content: space-between;
     border: 1px solid var(--border-soft);
-    border-radius: 8px;
+    border-radius: 0.75rem;
     background: var(--surface-soft);
-    padding: 8px 12px;
+    padding: 10px 12px;
     font-size: 13px;
     color: var(--text);
 }
@@ -494,7 +641,7 @@ button:focus-visible {
 .driver-health-panel th,
 .driver-health-panel td {
     border-bottom: 1px solid var(--border-soft);
-    padding: 8px 10px;
+    padding: 10px 12px;
     text-align: left;
     color: var(--text-strong);
 }
@@ -504,7 +651,7 @@ button:focus-visible {
     font-weight: 800;
     text-transform: uppercase;
     font-size: 11px;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.12em;
     color: var(--text-strong);
 }
 
@@ -516,10 +663,11 @@ button:focus-visible {
 .flag-badge {
     display: inline-block;
     border-radius: 999px;
-    padding: 2px 10px;
+    padding: 3px 10px;
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .flag-ok {
@@ -566,13 +714,15 @@ tr.flag-ok td:first-child {
 
 .eco-readout strong {
     color: var(--brand-text);
-    font-size: 22px;
+    font-family: 'Sora', 'Inter', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
 }
 
 .attitude-track {
     display: flex;
     height: 18px;
-    border-radius: 10px;
+    border-radius: 999px;
     overflow: hidden;
     border: 1px solid var(--border-soft);
 }
@@ -612,12 +762,12 @@ tr.flag-ok td:first-child {
 
 .skill-group summary {
     cursor: pointer;
-    font-weight: 800;
+    font-weight: 900;
     color: var(--brand-text);
     padding: 8px 0;
     text-transform: uppercase;
     font-size: 12px;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.22em;
 }
 
 .skill-rows {
@@ -630,9 +780,9 @@ tr.flag-ok td:first-child {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     gap: 14px;
     border: 1px solid var(--border-soft);
-    border-radius: 8px;
+    border-radius: 1rem;
     background: var(--surface-soft);
-    padding: 12px;
+    padding: 14px;
 }
 
 .skill-label strong {
@@ -658,10 +808,11 @@ tr.flag-ok td:first-child {
 .rating-pill {
     display: inline-block;
     border-radius: 999px;
-    padding: 2px 8px;
+    padding: 3px 10px;
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
     background: var(--border-soft);
     color: var(--text);
 }
@@ -704,9 +855,9 @@ tr.flag-ok td:first-child {
 
 .findings li {
     border: 1px solid var(--border-soft);
-    border-radius: 8px;
+    border-radius: 1rem;
     background: var(--surface-soft);
-    padding: 10px 12px;
+    padding: 12px 14px;
 }
 
 .findings li strong {
@@ -716,8 +867,8 @@ tr.flag-ok td:first-child {
 .reaction-group {
     margin-top: 14px;
     border: 1px solid var(--border-mid);
-    border-radius: 8px;
-    padding: 10px 14px;
+    border-radius: 1rem;
+    padding: 12px 16px;
     background: var(--surface-soft);
 }
 
@@ -745,7 +896,7 @@ a {
 }
 
 a:hover {
-    color: var(--brand-fill-hover);
+    color: var(--od-electric);
 }
 
 @media (max-width: 820px) {
@@ -753,5 +904,14 @@ a:hover {
     .skill-row,
     .attitude-legend {
         grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 28px 22px 22px;
+    }
+
+    .hero-icon {
+        height: 48px;
+        width: 48px;
     }
 }
